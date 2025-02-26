@@ -17,7 +17,7 @@ const PcSpecForm = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const formattedData = `CPU ${specs.cpu} with GPU ${specs.gpu} and RAM ${specs.ram}`;
+      const formattedData = `CPU ${specs.cpu} with GPU ${specs.gpu} with RAM ${specs.ram}`;
       const response = await apiCall.post(formattedData);
       console.log('Prediction:', response);
     } catch (error) {

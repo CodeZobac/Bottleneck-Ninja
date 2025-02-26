@@ -35,7 +35,7 @@ const apiCall: ApiCall = {
             const errorText = await response.text();
             throw new Error(`HTTP error! status: ${response.status}: ${errorText}`);
         }
-        
+        console.log('response:', response);
         return response.json();
     },
 };
