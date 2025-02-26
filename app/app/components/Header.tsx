@@ -31,8 +31,8 @@ const Header = () => {
       <nav>
         <ul className="flex items-center space-x-8">
           <li><a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Calculate</a></li>
-          <li><a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Login</a></li>
           <li><a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">My builds</a></li>
+          <li><a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Login</a></li>
         </ul>
       </nav>
     </header>

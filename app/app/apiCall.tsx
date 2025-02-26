@@ -8,9 +8,15 @@ interface PredictionResponse {
     prediction: string;
 }
 
+interface ComponentsResponse {
+    cpu: string[];
+    gpu: string[];
+}
+
 interface ApiCall {
     get: (text: string) => Promise<any>;
     post: (text: string) => Promise<PredictionResponse>;
+    getComponents: () => Promise<ComponentsResponse>;
 }
 
 const apiCall: ApiCall = {
@@ -21,7 +27,7 @@ const apiCall: ApiCall = {
 
     post: async (text: string) => {
         const requestBody: PredictionRequest = { test_text: text };
-        const response = await fetch('http://localhost:8000/predict', {
+        const response = await fetch('http://localhost:8000/predict/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -38,6 +44,27 @@ const apiCall: ApiCall = {
         console.log('response:', response);
         return response.json();
     },
+
+    getComponents: async () => {
+        try {
+            const response = await fetch('http://localhost:8000/components/', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                },
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP error! status: ${response.status}: ${errorText}`);
+            }
+            
+            return response.json();
+        } catch (error) {
+            console.error('Error fetching components:', error);
+            throw error;
+        }
+    }
 };
 
 export default apiCall;
