@@ -8,6 +8,14 @@ interface PredictionRequest {
 interface PredictionResponse {
     prediction: string;
 	recomendation: string[];
+    hardware_analysis?: {
+        bottleneck: string;
+        estimated_impact: {
+            CPU: number;
+            GPU: number;
+            RAM: number;
+        };
+    };
 }
 
 interface GpuModel {

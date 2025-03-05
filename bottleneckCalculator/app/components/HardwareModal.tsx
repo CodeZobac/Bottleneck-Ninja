@@ -71,6 +71,10 @@ export function HardwareModal() {
                 gpu: gpuSelection,
                 ram: ramSelection,
                 recomendation: response.recomendation || [],
+                hardware_analysis: response.hardware_analysis || {
+                  bottleneck: "",
+                  estimated_impact: { CPU: 0, GPU: 0, RAM: 0 }
+                },
                 timestamp: new Date().toISOString()
               }));
 

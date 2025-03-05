@@ -4,18 +4,28 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '../components/ui'
 import { motion } from 'framer-motion'
+import { HardwareChart } from '../components/HardwareChart'
 
 interface BottleneckData {
   cpu: string;
   gpu: string;
   ram: string;
   recomendation: string[] | string;
+  hardware_analysis?: {
+    bottleneck: string;
+    estimated_impact: {
+      CPU: number;
+      GPU: number;
+      RAM: number;
+    };
+  };
   timestamp: string;
 }
 
 export default function CalculateResults() {
   const [data, setData] = useState<BottleneckData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [chartData, setChartData] = useState<Array<{component: string, score: number}>>([])
   const router = useRouter()
 
   useEffect(() => {
@@ -38,6 +48,17 @@ export default function CalculateResults() {
         }
         
         setData(parsedData)
+        
+        // Process hardware_analysis data for the chart
+        if (parsedData.hardware_analysis?.estimated_impact) {
+          const impact = parsedData.hardware_analysis.estimated_impact;
+          const formattedChartData = [
+            { component: 'CPU', score: impact.CPU || 0 },
+            { component: 'GPU', score: impact.GPU || 0 },
+            { component: 'RAM', score: impact.RAM || 0 },
+          ];
+          setChartData(formattedChartData);
+        }
       } catch (error) {
         console.error('Error parsing bottleneck data:', error)
       }
@@ -58,7 +79,7 @@ export default function CalculateResults() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gray-50">
         <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-4 text-xl text-gray-700">Loading your results...</p>
+        <p className="mt-4 text-xl text-gray-700">Rendering your results...</p>
       </div>
     )
   }
@@ -114,6 +135,25 @@ export default function CalculateResults() {
             </div>
           </div>
         </motion.div>
+
+        {/* Bottleneck Analysis Chart */}
+        {chartData.length > 0 && (
+          <motion.div 
+            className="bg-white rounded-xl shadow-lg p-6 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <HardwareChart {...chartData} />
+            {data.hardware_analysis?.bottleneck && (
+              <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                <p className="font-medium text-center">
+                  Detected Bottleneck: <span className="text-red-600 font-bold">{data.hardware_analysis.bottleneck}</span>
+                </p>
+              </div>
+            )}
+          </motion.div>
+        )}
         
         {/* Recommendations Section */}
         <motion.div 
