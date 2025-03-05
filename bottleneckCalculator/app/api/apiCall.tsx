@@ -7,6 +7,7 @@ interface PredictionRequest {
 
 interface PredictionResponse {
     prediction: string;
+	recomendation: string[];
 }
 
 interface GpuModel {
@@ -31,11 +32,23 @@ interface CpuCategory {
     models: CpuModel[];
 }
 
+interface RamModel {
+    id: number;
+    name: string;
+}
+
+interface RamCategory {
+    id: number;
+    name: string;
+    models: RamModel[];
+}
+
 interface ComponentsResponse {
     cpu: string[];
     gpu?: string[];
     gpus?: GpuCategory[];
-	cpus?: CpuCategory[];
+    cpus?: CpuCategory[];
+    rams?: RamCategory[] | string[];
 }
 
 interface ApiCall {
@@ -44,6 +57,7 @@ interface ApiCall {
     getComponents: () => Promise<ComponentsResponse>;
     getGpuCategories: () => Promise<GpuCategory[]>;
     getCpuCategories: () => Promise<CpuCategory[]>;
+    getRamCategories: () => Promise<RamCategory[]>;
 }
 
 const apiCall: ApiCall = {
@@ -54,7 +68,7 @@ const apiCall: ApiCall = {
 
     post: async (text: string) => {
         const requestBody: PredictionRequest = { test_text: text };
-        const response = await fetch('http://localhost:8000/predict/', {
+        const response = await fetch('http://localhost:8000/predict', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -256,8 +270,98 @@ const apiCall: ApiCall = {
             // Return an empty array instead of throwing, so the UI can handle the error gracefully
             return [];
         }
+    },
+
+    // New method to fetch RAM categories
+    getRamCategories: async () => {
+        try {
+            console.log('Getting RAM categories...');
+            const data = await apiCall.getComponents();
+            console.log('Raw data for RAM categorization:', data);
+            
+            // Check if API already returns rams in the correct format
+            if (data.rams && Array.isArray(data.rams) && data.rams.length > 0 && typeof data.rams[0] === 'object' && data.rams[0] !== null && 'models' in data.rams[0]) {
+                console.log('Found rams array in correct structured format:', data.rams);
+                // Transform models array to landmarks for compatibility with Menu component
+                return (data.rams as RamCategory[]).map(category => ({
+                    ...category,
+                    landmarks: category.models
+                }));
+            }
+            
+            // If rams is an array of strings, we need to categorize them
+            let ramData: string[] = [];
+            
+            if (Array.isArray(data.rams) && data.rams.length > 0 && typeof data.rams[0] === 'string') {
+                console.log('Found rams as string array');
+                ramData = data.rams as string[];
+            } else if (Array.isArray(data)) {
+                // Old array format, RAM data might be at position 2
+                console.log('Data is an array, extracting from position 2');
+                ramData = Array.isArray(data[2]) ? data[2] : [];
+            } else {
+                console.error('Unexpected RAM data format');
+                console.log('Data type:', typeof data);
+                console.log('Available properties:', Object.keys(data || {}));
+                return []; // Return empty array on error
+            }
+            
+            console.log('Extracted RAM data:', ramData);
+            
+            // Categorize RAMs by DDR type
+            const categoryMap: { [key: string]: RamModel[] } = {
+                'DDR5': [],
+                'DDR4': [],
+                'DDR3': [],
+                'Other': []
+            };
+            
+            ramData.forEach((ram, index) => {
+                if (!ram || typeof ram !== 'string') {
+                    console.warn(`Invalid RAM data at index ${index}:`, ram);
+                    return;
+                }
+                
+                const ramModel: RamModel = { id: index, name: ram };
+                const upperRam = ram.toUpperCase();
+                
+                if (upperRam.includes('DDR5')) {
+                    categoryMap['DDR5'].push(ramModel);
+                } else if (upperRam.includes('DDR4')) {
+                    categoryMap['DDR4'].push(ramModel);
+                } else if (upperRam.includes('DDR3')) {
+                    categoryMap['DDR3'].push(ramModel);
+                } else {
+                    categoryMap['Other'].push(ramModel);
+                }
+            });
+            
+            // Log category counts to help diagnose issues
+            Object.entries(categoryMap).forEach(([category, models]) => {
+                console.log(`${category} RAMs found: ${models.length}`);
+            });
+            
+            // Convert to array format with proper structure
+            const formattedCategories: RamCategory[] = Object.entries(categoryMap)
+                .filter(([_, models]) => models.length > 0)
+                .map(([name, models], index) => ({
+                    id: index + 1,
+                    name,
+                    models,
+                    landmarks: models  // Add landmarks for compatibility with Menu component
+                }));
+            
+            console.log('Formatted RAM categories:', formattedCategories);
+            return formattedCategories;
+        } catch (error) {
+            console.error('Error formatting RAM categories:', error);
+            console.error('Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
+            
+            // Return an empty array instead of throwing, so the UI can handle the error gracefully
+            return [];
+        }
     }
 };
 
 export default apiCall;
-export type { GpuCategory, GpuModel, CpuCategory, CpuModel };
+export type { GpuCategory, GpuModel, CpuCategory, CpuModel, RamCategory, RamModel };
