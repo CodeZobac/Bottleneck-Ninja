@@ -71,9 +71,19 @@ export function HardwareModal() {
                 gpu: gpuSelection,
                 ram: ramSelection,
                 recomendation: response.recomendation || [],
-                hardware_analysis: response.hardware_analysis || {
-                  bottleneck: "",
-                  estimated_impact: { CPU: 0, GPU: 0, RAM: 0 }
+                result: {
+                  agreement: response.result.agreement || false,
+                  components: response.result.components || {
+                    CPU: 'average',
+                    GPU: 'average',
+                    RAM: 'average'
+                  },
+                  hardware_analysis: response.result.hardware_analysis || {
+                    bottleneck: "",
+                    percentile_ranks: {},
+                    raw_benchmark_scores: {},
+                    estimated_impact: { CPU: 0, GPU: 0, RAM: 0 }
+                  }
                 },
                 timestamp: new Date().toISOString()
               }));
