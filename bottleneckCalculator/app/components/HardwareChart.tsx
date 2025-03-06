@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useCallback, useRef, useEffect } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer } from "recharts"
 import { Card, ChartTooltip } from "./ui"
 
@@ -124,19 +124,7 @@ export function HardwareChart({ data }: HardwareChartProps) {
           fill={dotColor}
           stroke="white"
           strokeWidth={2}
-          className="drop-shadow-sm"
-          onClick={() => handleHover(payload.component)}
-          onMouseEnter={() => handleHover(payload.component)}
-          style={{ cursor: 'pointer' }}
-        />
-        
-        {/* Higher z-index transparent circle for better hover */}
-        <circle 
-          cx={cx} 
-          cy={cy} 
-          r={20}
-          fill="transparent"
-          onMouseEnter={() => handleHover(payload.component)}
+          className="drop-shadow-sm" 
           style={{ cursor: 'pointer' }}
         />
       </g>
@@ -144,14 +132,14 @@ export function HardwareChart({ data }: HardwareChartProps) {
   };
   
   // Tooltip component
-  const CustomTooltip = ({ active, payload }: { active?: boolean, payload?: any[] }) => {
+  const Tooltip = ({ active, payload }: { active?: boolean, payload?: any[] }) => {
     if (!active || !payload || !payload.length) return null;
     
     const component = payload[0]?.payload.component;
     const score = payload[0]?.value || 0;
     const isBottleneck = component === bottleneckComponent;
     
-    // Ensure hoveredComponent is updated when tooltip shows
+    
     useEffect(() => {
       if (component && component !== hoveredComponent) {
         handleHover(component);
@@ -199,33 +187,6 @@ export function HardwareChart({ data }: HardwareChartProps) {
         <Card.Description>Higher values indicate potential performance limitations</Card.Description>
       </Card.Header>
       <Card.Content className="pt-4">
-        {/* Component selection buttons */}
-        <div className="flex justify-center gap-2 mb-4">
-          {data.map(item => (
-            <button 
-              key={item.component}
-              className={`px-3 py-1.5 text-xs rounded-full ${
-                hoveredComponent === item.component 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-              onClick={() => handleHover(
-                hoveredComponent === item.component ? null : item.component
-              )}
-            >
-              {item.component}
-            </button>
-          ))}
-          {hoveredComponent && (
-            <button 
-              className="px-3 py-1.5 text-xs rounded-full bg-gray-200 text-gray-700"
-              onClick={() => handleHover(null)}
-            >
-              Clear
-            </button>
-          )}
-        </div>
-        
         {/* Chart container */}
         <div className="mx-auto aspect-square w-full max-h-[300px] relative">
           <ResponsiveContainer width="100%" height="100%">
@@ -234,7 +195,7 @@ export function HardwareChart({ data }: HardwareChartProps) {
               data={data} 
               margin={{ top: 10, right: 30, left: 30, bottom: 10 }}
             >
-              <ChartTooltip content={<CustomTooltip />} cursor={false} />
+              <ChartTooltip content={<Tooltip />} cursor={false} />
               <PolarGrid stroke={colorPalette.grid} strokeDasharray="3 3" />
               <PolarAngleAxis 
                 dataKey="component" 
@@ -254,17 +215,7 @@ export function HardwareChart({ data }: HardwareChartProps) {
               />
             </RadarChart>
           </ResponsiveContainer>
-        </div>
-        
-        {/* Color indicator - shows what colors are actually being used */}
-        <div 
-          className="h-2 w-full mt-2 mb-1 rounded-full" 
-          style={{ 
-            background: chartFill,
-            border: `1px solid ${chartStroke}`
-          }}
-        ></div>
-        
+        </div>        
         {/* Legend */}
         <div className="flex justify-center items-center gap-4 mt-4 flex-wrap">
           <div className="flex items-center">
