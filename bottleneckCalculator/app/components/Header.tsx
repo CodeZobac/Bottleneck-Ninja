@@ -1,5 +1,6 @@
 import React from 'react';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { HeaderMenu } from './HeaderMenu';
 
 
 const Header = () => {
@@ -29,11 +30,7 @@ const Header = () => {
       
       {/* Navigation */}
       <nav>
-        <ul className="flex items-center space-x-8">
-          <li><a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Calculate</a></li>
-          <li><a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Login</a></li>
-          <li><a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">My builds</a></li>
-        </ul>
+        <HeaderMenu />
       </nav>
     </header>
   );
