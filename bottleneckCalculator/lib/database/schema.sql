@@ -48,3 +48,15 @@ CREATE TABLE IF NOT EXISTS verification_tokens (
   
   UNIQUE(identifier, token)
 );
+
+-- Enable RLS
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE accounts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE verification_tokens ENABLE ROW LEVEL SECURITY;
+
+-- Create policies
+CREATE POLICY "Service role can manage all users" ON users FOR ALL TO authenticated USING (true);
+CREATE POLICY "Service role can manage all accounts" ON accounts FOR ALL TO authenticated USING (true);
+CREATE POLICY "Service role can manage all sessions" ON sessions FOR ALL TO authenticated USING (true);
+CREATE POLICY "Service role can manage all tokens" ON verification_tokens FOR ALL TO authenticated USING (true);

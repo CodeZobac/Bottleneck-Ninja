@@ -1,3 +1,5 @@
+"use client"
+
 import { DotLottieReact } from "@lottiefiles/dotlottie-react"
 import { HardwareModal } from "./HardwareModal"
 

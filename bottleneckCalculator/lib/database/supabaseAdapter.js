@@ -129,7 +129,7 @@ export function SupabaseAdapter() {
         .from('sessions')
         .insert({
           user_id: data.userId,
-          expires: data.expires,
+          expires: new Date(data.expires).toISOString(),
           session_token: data.sessionToken,
         })
         .select()
