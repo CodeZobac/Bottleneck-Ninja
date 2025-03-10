@@ -8,24 +8,67 @@ import {
   IconMoon,
   IconSettings,
   IconSun,
+  IconAnonymous,
 } from "justd-icons"
 import { useTheme } from "next-themes"
 import { signIn, signOut, useSession } from "next-auth/react"
 import { Avatar, Menu } from "./ui"
 
+
+
 export function HeaderMenu() {
-  const { resolvedTheme, setTheme } = useTheme()
+  const { resolvedTheme, theme, setTheme } = useTheme()
   const { data: session } = useSession()
   
-  // If not signed in, show sign in button
+  console.log("Current theme:", theme, "Resolved theme:", resolvedTheme);
+  
+  // If not signed in, show guest menu
   if (!session) {
     return (
-      <button 
-        onClick={() => signIn("google")}
-        className="rounded-md px-3 py-2 text-sm font-medium bg-primary text-white hover:bg-primary/90"
-      >
-        Sign In
-      </button>
+      <Menu>
+        <Menu.Trigger aria-label="Open Menu">
+          <Avatar 
+            alt="Guest" 
+            size="large" 
+            src="/icon.jpg"
+            className="bg-gray-200 w-12 h-12"
+          />
+        </Menu.Trigger>
+        <Menu.Content placement="bottom" showArrow className="sm:min-w-64">
+          <Menu.Header separator>
+            <span className="block">Guest</span>
+            <span className="font-normal text-muted-fg">Not signed in</span>
+          </Menu.Header>
+
+          <Menu.Submenu>
+            <Menu.Item>
+              {resolvedTheme === "light" ? (
+                <IconSun />
+              ) : resolvedTheme === "dark" ? (
+                <IconMoon />
+              ) : (
+                <IconDeviceDesktop />
+              )}
+              <span className="menu-label">Switch theme</span>
+            </Menu.Item>
+            <Menu.Content>
+              <Menu.Item onAction={() => setTheme("system")}>
+                <IconDeviceDesktop /> System
+              </Menu.Item>
+              <Menu.Item onAction={() => setTheme("dark")}>
+                <IconMoon /> Dark
+              </Menu.Item>
+              <Menu.Item onAction={() => setTheme("light")}>
+                <IconSun /> Light
+              </Menu.Item>
+            </Menu.Content>
+          </Menu.Submenu>
+          <Menu.Separator />
+          <Menu.Item onAction={() => signIn("google")}>
+            <span className="menu-label">Sign In / Register</span>
+          </Menu.Item>
+        </Menu.Content>
+      </Menu>
     )
   }
   
@@ -35,7 +78,7 @@ export function HeaderMenu() {
         <Avatar 
           alt={session.user?.name || "User"} 
           size="large" 
-          src={session.user?.image || "/images/avatar/default.jpg"} 
+          src={session.user?.image} 
         />
       </Menu.Trigger>
       <Menu.Content placement="bottom" showArrow className="sm:min-w-64">

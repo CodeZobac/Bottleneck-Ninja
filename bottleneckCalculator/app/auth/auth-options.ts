@@ -11,7 +11,7 @@ export const authOptions: NextAuthOptions = {
   ],
   adapter: SupabaseAdapter(),
   session: {
-    strategy: "jwt",  // Changed from "database" to "jwt"
+    strategy: "jwt",  
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   cookies: {
@@ -27,7 +27,6 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async session({ session, token }) {
-      // When using JWT strategy, we get token instead of user
       if (session?.user) {
         session.user.id = token.sub as string;
       }

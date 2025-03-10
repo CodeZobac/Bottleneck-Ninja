@@ -125,19 +125,7 @@ export function HardwareChart({ data }: HardwareChartProps) {
           stroke="white"
           strokeWidth={2}
           className="drop-shadow-sm"
-          onClick={() => handleHover(payload.component)}
           onMouseEnter={() => handleHover(payload.component)}
-          style={{ cursor: 'pointer' }}
-        />
-        
-        {/* Higher z-index transparent circle for better hover */}
-        <circle 
-          cx={cx} 
-          cy={cy} 
-          r={20}
-          fill="transparent"
-          onMouseEnter={() => handleHover(payload.component)}
-          style={{ cursor: 'pointer' }}
         />
       </g>
     );
@@ -198,34 +186,7 @@ export function HardwareChart({ data }: HardwareChartProps) {
         <Card.Title>Component Impact Analysis</Card.Title>
         <Card.Description>Higher values indicate potential performance limitations</Card.Description>
       </Card.Header>
-      <Card.Content className="pt-4">
-        {/* Component selection buttons */}
-        <div className="flex justify-center gap-2 mb-4">
-          {data.map(item => (
-            <button 
-              key={item.component}
-              className={`px-3 py-1.5 text-xs rounded-full ${
-                hoveredComponent === item.component 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-              onClick={() => handleHover(
-                hoveredComponent === item.component ? null : item.component
-              )}
-            >
-              {item.component}
-            </button>
-          ))}
-          {hoveredComponent && (
-            <button 
-              className="px-3 py-1.5 text-xs rounded-full bg-gray-200 text-gray-700"
-              onClick={() => handleHover(null)}
-            >
-              Clear
-            </button>
-          )}
-        </div>
-        
+      <Card.Content className="pt-4">        
         {/* Chart container */}
         <div className="mx-auto aspect-square w-full max-h-[300px] relative">
           <ResponsiveContainer width="100%" height="100%">
@@ -255,16 +216,6 @@ export function HardwareChart({ data }: HardwareChartProps) {
             </RadarChart>
           </ResponsiveContainer>
         </div>
-        
-        {/* Color indicator - shows what colors are actually being used */}
-        <div 
-          className="h-2 w-full mt-2 mb-1 rounded-full" 
-          style={{ 
-            background: chartFill,
-            border: `1px solid ${chartStroke}`
-          }}
-        ></div>
-        
         {/* Legend */}
         <div className="flex justify-center items-center gap-4 mt-4 flex-wrap">
           <div className="flex items-center">
