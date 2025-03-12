@@ -1,18 +1,53 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "./providers/auth-provider";
 import { ThemeProvider } from "next-themes";
+import localFont from "next/font/local";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+// Define the Geist fonts
+const geistSans = localFont({
+  src: [
+    {
+      path: '../node_modules/geist/dist/fonts/geist-sans/Geist-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../node_modules/geist/dist/fonts/geist-sans/Geist-Medium.woff2',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../node_modules/geist/dist/fonts/geist-sans/Geist-Bold.woff2',
+      weight: '700',
+      style: 'normal',
+    }
+  ],
+  variable: '--font-geist-sans',
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const geistMono = localFont({
+  src: [
+    {
+      path: '../node_modules/geist/dist/fonts/geist-mono/GeistMono-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../node_modules/geist/dist/fonts/geist-mono/GeistMono-Medium.woff2',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../node_modules/geist/dist/fonts/geist-mono/GeistMono-Bold.woff2',
+      weight: '700',
+      style: 'normal',
+    }
+  ],
+  variable: '--font-geist-mono',
 });
+
+// Rest of your code remains the same
 
 export const metadata: Metadata = {
   title: "Create Next App",
