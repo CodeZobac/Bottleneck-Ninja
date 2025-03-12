@@ -78,15 +78,17 @@ interface ApiCall {
     getRamCategories: () => Promise<RamCategory[]>;
 }
 
+const url = process.env.NEXT_PUBLIC_API_URL;
+
 const apiCall: ApiCall = {
     get: async (text: string) => {
-        const response = await fetch(`http://localhost:8000/predict/?test_text=${encodeURIComponent(text)}`);
+        const response = await fetch(`${url}/predict/?test_text=${encodeURIComponent(text)}`);
         return response.json();
     },
 
     post: async (text: string) => {
         const requestBody: PredictionRequest = { test_text: text };
-        const response = await fetch('http://localhost:8000/predict', {
+        const response = await fetch(`${url}/predict`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -108,7 +110,7 @@ const apiCall: ApiCall = {
     getComponents: async () => {
         try {
             console.log('Fetching components from API...');
-            const response = await fetch('http://localhost:8000/components', {
+            const response = await fetch(`${url}/components`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
