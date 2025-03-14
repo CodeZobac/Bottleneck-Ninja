@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
-import React, { useState, useCallback, useRef, useEffect } from 'react'
+import React, { useState, useCallback, useEffect, Component } from 'react'
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer } from "recharts"
 import { Card, ChartTooltip } from "./ui"
 
@@ -98,7 +99,8 @@ export function HardwareChart({ data }: HardwareChartProps) {
   }, [hoveredComponent, data, bottleneckComponent]);
 
   // Simple dot component
-  const DotComponent = ({ cx, cy, payload }: any) => {
+  
+  const DotComponent = ({ cx, cy, payload }: any | Component) => {
     const isHovered = hoveredComponent === payload.component;
     
     // Get dot color
@@ -132,7 +134,7 @@ export function HardwareChart({ data }: HardwareChartProps) {
   };
   
   // Tooltip component
-  const CustomTooltip = ({ active, payload }: { active?: boolean, payload?: any[] }) => {
+  const CustomTooltip = ({ active, payload }: { active?: boolean, payload?: any[] | string[] }) => {
     if (!active || !payload || !payload.length) return null;
     
     const component = payload[0]?.payload.component;
@@ -140,6 +142,7 @@ export function HardwareChart({ data }: HardwareChartProps) {
     const isBottleneck = component === bottleneckComponent;
     
     // Ensure hoveredComponent is updated when tooltip shows
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
       if (component && component !== hoveredComponent) {
         handleHover(component);

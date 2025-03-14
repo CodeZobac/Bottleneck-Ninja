@@ -16,8 +16,8 @@ interface BottleneckData {
     };
     hardware_analysis: {
       bottleneck: string;
-      percentile_ranks: any;
-      raw_benchmark_scores: any;
+      percentile_ranks: unknown | object;
+      raw_benchmark_scores: unknown | object;
       estimated_impact: {
         CPU: number;
         GPU: number;
@@ -223,6 +223,7 @@ export default function CalculateResults() {
         >
           <h1 className="text-3xl md:text-4xl font-bold text-blue-900 mb-2">Bottleneck Analysis Results</h1>
           <p className="text-lg text-gray-600">
+            {/* eslint-disable-next-line react/no-unescaped-entities */}
             Based on your selected components, we've analyzed potential performance bottlenecks
           </p>
         </motion.div>

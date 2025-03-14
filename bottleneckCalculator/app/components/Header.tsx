@@ -2,6 +2,7 @@
 import React from 'react';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { HeaderMenu } from './HeaderMenu';
+import Image from 'next/image';
 
 
 const Header = () => {
@@ -22,7 +23,7 @@ const Header = () => {
 		}}
 		/>
 	  </div>
-	  <img 
+	  <Image 
 		src="/name.svg" 
 		alt="Name" 
 		className="h-16 -ml-6"

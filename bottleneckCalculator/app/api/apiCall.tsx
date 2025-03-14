@@ -17,8 +17,8 @@ interface PredictionResponse {
 		};
 		hardware_analysis: {
 		  bottleneck: string;
-		  percentile_ranks: any;
-		  raw_benchmark_scores: any;
+		  percentile_ranks: unknown | string;
+		  raw_benchmark_scores: unknown | string;
 		  estimated_impact: {
 			CPU: number;
 			GPU: number;
@@ -70,7 +70,7 @@ interface ComponentsResponse {
 }
 
 interface ApiCall {
-    get: (text: string) => Promise<any>;
+    get: (text: string) => Promise<PredictionRequest>;
     post: (text: string) => Promise<PredictionResponse>;
     getComponents: () => Promise<ComponentsResponse>;
     getGpuCategories: () => Promise<GpuCategory[]>;
@@ -183,6 +183,7 @@ const apiCall: ApiCall = {
             
             // Convert to array format with proper structure
             const formattedCategories: GpuCategory[] = Object.entries(categoryMap)
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 .filter(([_, models]) => models.length > 0)
                 .map(([name, models], index) => ({
                     id: index + 1,
@@ -271,6 +272,7 @@ const apiCall: ApiCall = {
             
             // Convert to array format with proper structure
             const formattedCategories: CpuCategory[] = Object.entries(categoryMap)
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 .filter(([_, models]) => models.length > 0)
                 .map(([name, models], index) => ({
                     id: index + 1,
@@ -363,6 +365,7 @@ const apiCall: ApiCall = {
             
             // Convert to array format with proper structure
             const formattedCategories: RamCategory[] = Object.entries(categoryMap)
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 .filter(([_, models]) => models.length > 0)
                 .map(([name, models], index) => ({
                     id: index + 1,

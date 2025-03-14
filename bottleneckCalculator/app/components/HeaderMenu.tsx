@@ -8,7 +8,6 @@ import {
   IconMoon,
   IconSettings,
   IconSun,
-  IconAnonymous,
 } from "justd-icons"
 import { useTheme } from "next-themes"
 import { signIn, signOut, useSession } from "next-auth/react"

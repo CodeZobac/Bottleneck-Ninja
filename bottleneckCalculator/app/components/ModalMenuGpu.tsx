@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Menu } from "./ui"
 import apiCall, { GpuCategory } from "../api/apiCall"
 
 interface GpuMenuProps {

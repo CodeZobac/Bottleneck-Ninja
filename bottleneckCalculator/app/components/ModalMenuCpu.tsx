@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Menu } from "./ui"
 import apiCall, { CpuCategory } from "../api/apiCall"
 
 interface CpuMenuProps {

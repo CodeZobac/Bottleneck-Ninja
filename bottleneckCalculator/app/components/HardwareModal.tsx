@@ -1,9 +1,9 @@
 "use client"
 import React from "react"
-import { Button, Form, Modal, TextField } from "./ui"
+import { Button, Form, Modal} from "./ui"
 import { GpuMenu } from "./ModalMenuGpu"
 import { CpuMenu } from "./ModalMenuCpu"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { RamMenu } from "./ModalMenuRam"
 import Lottie from 'lottie-react'
 import apiCall from "../api/apiCall"
@@ -110,7 +110,7 @@ export function HardwareModal() {
                 {/* Use locally stored Lottie file from public directory */}
                 <div className="w-48 h-48">
 					<Lottie 
-						animationData={require('../../public/isLoading.json')}
+						animationData={"/isLoading.json"}
 						loop={true}
 						autoplay={true}
 						style={{ width: '100%', height: '100%' }}
