@@ -13,7 +13,7 @@ const avatarGroupStyles = tv({
 
 interface AvatarGroupProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof avatarGroupStyles> {
+  VariantProps<typeof avatarGroupStyles> {
   children: React.ReactNode
 }
 
@@ -50,7 +50,7 @@ type Status = "away" | "online" | "offline" | "dnd" | "idle"
 
 interface AvatarProps
   extends React.ComponentPropsWithoutRef<"span">,
-    VariantProps<typeof avatarStyles> {
+  VariantProps<typeof avatarStyles> {
   src?: string | null
   initials?: string
   alt?: string
@@ -97,7 +97,9 @@ const Avatar = ({
           </text>
         </svg>
       )}
-      {src && <Image src={src} alt={alt} />}
+      {src && <Image src={src} alt={alt}
+        width={48}
+        height={48} />}
       {status && <AvatarBadge size={size} status={status} aria-label={status} />}
     </span>
   )

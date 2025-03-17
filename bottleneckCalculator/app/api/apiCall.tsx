@@ -79,20 +79,29 @@ interface ApiCall {
 }
 
 const url = process.env.NEXT_PUBLIC_API_URL;
+const endpoint1 = process.env.NEXT_PUBLIC_API_ENDPOINT1;
+const endpoint2 = process.env.NEXT_PUBLIC_API_ENDPOINT2;
+const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
 const apiCall: ApiCall = {
     get: async (text: string) => {
-        const response = await fetch(`${url}/predict/?test_text=${encodeURIComponent(text)}`);
+        const response = await fetch(`${url}/${endpoint1}/?test_text=${encodeURIComponent(text)}`, {
+            headers: {
+                'Accept': 'application/json',
+                'bottleneck-api-caboz': apiKey || ''
+            }
+        });
         return response.json();
     },
 
     post: async (text: string) => {
         const requestBody: PredictionRequest = { test_text: text };
-        const response = await fetch(`${url}/predict`, {
+        const response = await fetch(`${url}/${endpoint1}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                'bottleneck-api-caboz': apiKey || '',
             },
             mode: 'cors',
             body: JSON.stringify(requestBody)
@@ -110,10 +119,11 @@ const apiCall: ApiCall = {
     getComponents: async () => {
         try {
             console.log('Fetching components from API...');
-            const response = await fetch(`${url}/components`, {
+            const response = await fetch(`${url}/${endpoint2}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
+                    'bottleneck-api-caboz': apiKey || '',
                 },
             });
             

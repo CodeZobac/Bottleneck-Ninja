@@ -27,6 +27,8 @@ const Header = () => {
 		src="/name.svg" 
 		alt="Name" 
 		className="h-16 -ml-6"
+		width={200}
+		height={50}
 	  />
 	</div>
       
