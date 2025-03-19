@@ -81,7 +81,7 @@ interface ApiCall {
 const url = process.env.NEXT_PUBLIC_API_URL;
 const endpoint1 = process.env.NEXT_PUBLIC_API_ENDPOINT1;
 const endpoint2 = process.env.NEXT_PUBLIC_API_ENDPOINT2;
-const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+// const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
 // CORS proxy options - use only if direct requests fail
 const corsProxies = [
@@ -121,7 +121,6 @@ const apiCall: ApiCall = {
         const response = await fetchWithCorsHandling(apiUrl, {
             headers: {
                 'Accept': 'application/json',
-                'bottleneck-api-caboz': apiKey || ''
             }
         });
         return response.json();
@@ -135,7 +134,6 @@ const apiCall: ApiCall = {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'bottleneck-api-caboz': apiKey || '',
             },
             mode: 'cors',
             body: JSON.stringify(requestBody)
@@ -158,7 +156,6 @@ const apiCall: ApiCall = {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
-                    'bottleneck-api-caboz': apiKey || '',
                 },
             });
             
