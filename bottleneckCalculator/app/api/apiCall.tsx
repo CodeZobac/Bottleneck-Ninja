@@ -83,42 +83,10 @@ const endpoint1 = process.env.NEXT_PUBLIC_API_ENDPOINT1;
 const endpoint2 = process.env.NEXT_PUBLIC_API_ENDPOINT2;
 // const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
-// CORS proxy options - use only if direct requests fail
-const corsProxies = [
-    'https://cors-anywhere.herokuapp.com/',
-    'https://api.allorigins.win/raw?url='
-];
-
-// Helper function to try multiple strategies for API calls
-const fetchWithCorsHandling = async (url: string, options: RequestInit) => {
-    try {
-        // First try: Direct request
-        const response = await fetch(url, options);
-        return response;
-    } catch (error) {
-        console.warn('Direct request failed, trying CORS proxy:', error);
-        
-        // If direct request fails, try with proxies
-        for (const proxy of corsProxies) {
-            try {
-                const proxyUrl = `${proxy}${encodeURIComponent(url)}`;
-                console.log(`Trying with proxy: ${proxy}`);
-                const proxyResponse = await fetch(proxyUrl, options);
-                return proxyResponse;
-            } catch (proxyError) {
-                console.warn(`Proxy ${proxy} failed:`, proxyError);
-            }
-        }
-        
-        // If all attempts fail, throw the original error
-        throw error;
-    }
-};
-
 const apiCall: ApiCall = {
     get: async (text: string) => {
         const apiUrl = `${url}/${endpoint1}/?test_text=${encodeURIComponent(text)}`;
-        const response = await fetchWithCorsHandling(apiUrl, {
+        const response = await fetch(apiUrl, {
             headers: {
                 'Accept': 'application/json',
             }
@@ -129,7 +97,7 @@ const apiCall: ApiCall = {
     post: async (text: string) => {
         const requestBody: PredictionRequest = { test_text: text };
         const apiUrl = `${url}/${endpoint1}`;
-        const response = await fetchWithCorsHandling(apiUrl, {
+        const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -152,11 +120,12 @@ const apiCall: ApiCall = {
         try {
             console.log('Fetching components from API...');
             const apiUrl = `${url}/${endpoint2}`;
-            const response = await fetchWithCorsHandling(apiUrl, {
+            const response = await fetch(apiUrl, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
                 },
+                mode: 'cors'
             });
             
             if (!response.ok) {
