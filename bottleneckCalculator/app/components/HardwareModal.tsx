@@ -3,7 +3,7 @@ import React from "react"
 import { Button, Form, Modal} from "./ui"
 import { GpuMenu } from "./ModalMenuGpu"
 import { CpuMenu } from "./ModalMenuCpu"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { RamMenu } from "./ModalMenuRam"
 import Lottie from 'lottie-react'
 import apiCall from "../api/apiCall"
@@ -15,7 +15,27 @@ export function HardwareModal() {
   const [selectedGpu, setSelectedGpu] = useState<string>("");
   const [selectedRam, setSelectedRam] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingAnimation, setLoadingAnimation] = useState<any>(null);
   const router = useRouter();
+  
+  // Load the animation data
+  useEffect(() => {
+    // Only load the animation when needed
+    if (isLoading) {
+      try {
+        import('/public/isLoading.json')
+          .then(animData => {
+            setLoadingAnimation(animData.default);
+          })
+          .catch(err => {
+            console.error("Failed to load animation:", err);
+            // Provide fallback or continue without animation
+          });
+      } catch (error) {
+        console.error("Error importing animation:", error);
+      }
+    }
+  }, [isLoading]);
   
   const handleModalOpen = () => {
     setIsOpen(true);
@@ -107,14 +127,20 @@ export function HardwareModal() {
           <Modal.Body className="pb-1 !overflow-visible">
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-10">
-                {/* Use locally stored Lottie file from public directory */}
+                {/* Render animation only when data is loaded */}
                 <div className="w-48 h-48">
-					<Lottie 
-						animationData={"/isLoading.json"}
-						loop={true}
-						autoplay={true}
-						style={{ width: '100%', height: '100%' }}
-					/>
+                  {loadingAnimation ? (
+                    <Lottie 
+                      animationData={loadingAnimation}
+                      loop={true}
+                      autoplay={true}
+                      style={{ width: '100%', height: '100%' }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                    </div>
+                  )}
                 </div>
                 <p className="text-lg text-blue-700 font-medium mt-4">Calculating Bottleneck...</p>
                 <p className="text-sm text-gray-500 mt-2">This will take just a moment</p>
