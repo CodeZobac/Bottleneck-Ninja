@@ -5,9 +5,19 @@ import { GpuMenu } from "./ModalMenuGpu"
 import { CpuMenu } from "./ModalMenuCpu"
 import { useState, useEffect } from "react"
 import { RamMenu } from "./ModalMenuRam"
-import Lottie from 'lottie-react'
+import dynamic from 'next/dynamic'
 import apiCall from "../api/apiCall"
 import { useRouter } from 'next/navigation'
+
+// Import Lottie client-side only
+const Lottie = dynamic(() => import('lottie-react'), { 
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+  )
+})
 
 export function HardwareModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,23 +29,26 @@ export function HardwareModal() {
   const [loadingAnimation, setLoadingAnimation] = useState<any>(null);
   const router = useRouter();
   
-  // Load the animation data
+  // Load the animation data client-side only
   useEffect(() => {
-    // Only load the animation when needed
-    if (isLoading) {
-      try {
-        import('../../public/isLoading.json')
-          .then(animData => {
+    let isMounted = true;
+    
+    // Only load animation on client when needed
+    if (isLoading && typeof window !== 'undefined') {
+      import('../../public/isLoading.json')
+        .then(animData => {
+          if (isMounted && animData?.default) {
             setLoadingAnimation(animData.default);
-          })
-          .catch(err => {
-            console.error("Failed to load animation:", err);
-            // Provide fallback or continue without animation
-          });
-      } catch (error) {
-        console.error("Error importing animation:", error);
-      }
+          }
+        })
+        .catch(err => {
+          console.error("Failed to load animation:", err);
+        });
     }
+    
+    return () => {
+      isMounted = false;
+    };
   }, [isLoading]);
   
   const handleModalOpen = () => {
@@ -128,9 +141,9 @@ export function HardwareModal() {
           <Modal.Body className="pb-1 !overflow-visible">
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-10">
-                {/* Render animation only when data is loaded */}
+                {/* Render animation only when data is loaded and on client */}
                 <div className="w-48 h-48">
-                  {loadingAnimation ? (
+                  {loadingAnimation && typeof window !== 'undefined' ? (
                     <Lottie 
                       animationData={loadingAnimation}
                       loop={true}
