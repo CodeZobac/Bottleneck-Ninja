@@ -15,6 +15,7 @@ export function HardwareModal() {
   const [selectedGpu, setSelectedGpu] = useState<string>("");
   const [selectedRam, setSelectedRam] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [loadingAnimation, setLoadingAnimation] = useState<any>(null);
   const router = useRouter();
   
@@ -23,7 +24,7 @@ export function HardwareModal() {
     // Only load the animation when needed
     if (isLoading) {
       try {
-        import('/public/isLoading.json')
+        import('../../public/isLoading.json')
           .then(animData => {
             setLoadingAnimation(animData.default);
           })
