@@ -1,12 +1,12 @@
 "use client"
 
 import {
+  IconCirclePerson,
   IconCommandRegular,
-  IconDashboard,
   IconDeviceDesktop,
   IconLogout,
+  IconMacbook,
   IconMoon,
-  IconSettings,
   IconSun,
 } from "justd-icons"
 import { useTheme } from "next-themes"
@@ -88,12 +88,12 @@ export function HeaderMenu() {
 
         <Menu.Section>
           <Menu.Item href="#dashboard">
-            <IconDashboard />
-            <span className="menu-label">Dashboard</span>
+            <IconMacbook />
+            <span className="menu-label">My Builds</span>
           </Menu.Item>
-          <Menu.Item href="#settings">
-            <IconSettings />
-            <span className="menu-label">Settings</span>
+          <Menu.Item href="/profile">
+            <IconCirclePerson />
+            <span className="menu-label">Profile</span>
           </Menu.Item>
         </Menu.Section>
         <Menu.Separator />

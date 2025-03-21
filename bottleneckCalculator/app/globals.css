@@ -2,6 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+
+:root {
+  /* Light mode variables */
+  --bg: 0 0% 100%; /* white background */
+  --fg: 222 47% 11%; /* dark text */
+  --primary: 221 83% 53%; /* blue */
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 224 71% 45%;
+  /* Add other light mode variables */
+}
+
+/* Dark mode - applied when .dark class is on html */
+.dark {
+  --bg: 222 47% 11%; /* dark background */
+  --fg: 210 40% 98%; /* light text */
+  --primary: 217 91% 60%; /* brighter blue */
+  --border: 215 28% 17%;
+  --input: 215 28% 17%;
+  --ring: 224 76% 48%;
+  /* Add other dark mode variables */
+}
+
+
+
 @layer base {
     :root {
         --light: 223.81 0% 98%;

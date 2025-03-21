@@ -2,10 +2,13 @@
 'use client';
 
 import { useState } from "react";
-import { supabase } from "@/lib/database/supabase";
+import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
 
-
+// Initialize Supabase client
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface FirstTimeSetupProps {
   session: any;

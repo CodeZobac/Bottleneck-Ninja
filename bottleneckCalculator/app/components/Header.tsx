@@ -7,7 +7,7 @@ import Image from 'next/image';
 
 const Header = () => {
   return (
-    <header className="w-full bg-white shadow-md py-1 px-6 flex items-center justify-between">
+    <header className="w-full bg-bg border-b border-border shadow-sm py-1 px-6 flex items-center justify-between">
       {/* Logo section */}
 	<div className="flex items-center -ml-4">
 	  <div className="w-64 h-28 flex items-center justify-center" style={{ marginTop: '-12px', marginBottom: '-12px' }}>

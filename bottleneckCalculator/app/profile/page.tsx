@@ -1,12 +1,15 @@
 'use client';
 
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { redirect } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
 import FirstTimeSetup from "./FirstTimeSetup";
 import Image from "next/image";
-import { supabase } from "@/lib/database/supabase";
 
+// Initialize Supabase client
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
@@ -17,7 +20,7 @@ export default function ProfilePage() {
   // Redirect if not authenticated
   useEffect(() => {
     if (status === "unauthenticated") {
-      redirect("/login");
+      signIn("google")
     }
   }, [status]);
 
