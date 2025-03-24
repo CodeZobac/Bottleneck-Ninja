@@ -12,6 +12,7 @@ import {
 import { useTheme } from "next-themes"
 import { signIn, signOut, useSession } from "next-auth/react"
 import { Avatar, Menu } from "./ui"
+import Link from "next/link"
 
 
 
@@ -87,7 +88,7 @@ export function HeaderMenu() {
         </Menu.Header>
 
         <Menu.Section>
-          <Menu.Item href="#dashboard">
+          <Menu.Item href="/builds">
             <IconMacbook />
             <span className="menu-label">My Builds</span>
           </Menu.Item>

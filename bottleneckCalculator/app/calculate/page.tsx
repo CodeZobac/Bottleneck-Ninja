@@ -1,10 +1,19 @@
 "use client"
-
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '../components/ui'
 import { motion } from 'framer-motion'
 import { HardwareChart } from '../components/HardwareChart'
+import { useSession } from 'next-auth/react'
+import { ConfirmationModal } from '../components/ConfirmationModal'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '../components/ui/dropdown'
+import { HardwareBuild } from '../builds/types'
+import { SaveIcon, FileDown, User } from 'lucide-react'
 
 interface BottleneckData {
   result: {
@@ -36,7 +45,11 @@ export default function CalculateResults() {
   const [data, setData] = useState<BottleneckData | null>(null)
   const [loading, setLoading] = useState(true)
   const [chartData, setChartData] = useState<Array<{component: string, score: number}>>([])
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveSuccess, setSaveSuccess] = useState(false)
   const router = useRouter()
+  const { data: session, status } = useSession()
 
   useEffect(() => {
     // Get data from localStorage
@@ -102,7 +115,6 @@ export default function CalculateResults() {
     // Otherwise, balanced system
     return 'bg-green-50 border-green-200';
   };
-
   // Get the appropriate text color for the bottleneck label
   const getBottleneckTextColorClass = (data: BottleneckData) => {
     if (!data?.result?.hardware_analysis?.bottleneck) return 'text-green-600';
@@ -121,7 +133,6 @@ export default function CalculateResults() {
     // Otherwise, balanced system
     return 'text-green-600';
   };
-
   // Fix these component color functions with explicit component checks
   const getComponentBgClass = (component: 'CPU' | 'GPU' | 'RAM') => {
     // First check if we have valid impact data
@@ -184,7 +195,6 @@ export default function CalculateResults() {
     // Use green text as default for all balanced components
     return 'text-green-600';
   };
-
   // Add debug function to display impact values for easy verification
   const getImpactValue = (component: 'CPU' | 'GPU' | 'RAM'): string => {
     if (!data?.result?.hardware_analysis?.estimated_impact) return '0';
@@ -192,6 +202,77 @@ export default function CalculateResults() {
     return impact !== undefined ? impact.toFixed(1) : '0';
   };
 
+  // Function to save build to user profile
+  const saveBuildToProfile = async () => {
+    if (!data) return;
+    
+    // Show loading state
+    setIsSaving(true);
+    
+    try {
+      // Get form values from localStorage if available
+      const formDataString = localStorage.getItem('formData');
+      let formData = {};
+      
+      if (formDataString) {
+        try {
+          formData = JSON.parse(formDataString);
+        } catch (error) {
+          console.error('Error parsing form data:', error);
+        }
+      }
+      
+      // Create build object
+      const build: HardwareBuild = {
+        cpu: data.cpu,
+        gpu: data.gpu,
+        ram: data.ram,
+        budget: formData?.budget ? parseFloat(formData.budget as string) : undefined,
+        cpu_intensive: formData?.cpuIntensive === 'true',
+        gpu_intensive: formData?.gpuIntensive === 'true',
+        gaming: formData?.gaming === 'true',
+        recomendation: data.recomendation,
+        result: data.result
+      };
+      
+      // Send request to API
+      const response = await fetch('/api/builds', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(build),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to save build');
+      }
+      
+      // Show success message
+      setSaveSuccess(true);
+      
+      // Redirect to builds page after a moment
+      setTimeout(() => {
+        router.push('/builds');
+      }, 1500);
+    } catch (error) {
+      console.error('Error saving build:', error);
+      alert('Failed to save build. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Handle back button click
+  const handleBackClick = () => {
+    setShowConfirmModal(true);
+  };
+
+  // Handle save as PDF
+  const handleSaveAsPDF = () => {
+    window.print();
+  };
+  
   // Loading state
   if (loading) {
     return (
@@ -211,6 +292,40 @@ export default function CalculateResults() {
     )
   }
 
+  // Success state after saving
+  if (saveSuccess) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-green-50 to-gray-50">
+        <div className="bg-white rounded-xl shadow-lg p-8 max-w-md text-center">
+          <div className="flex items-center justify-center mb-6">
+            <div className="rounded-full bg-green-100 p-3">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-green-500"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Successfully Saved!</h2>
+          <p className="text-gray-600 mb-6">Your build has been saved to your profile. Redirecting to your builds...</p>
+          <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="bg-green-500 h-2 animate-progress"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 p-6">
       <div className="max-w-4xl mx-auto">
@@ -283,7 +398,6 @@ export default function CalculateResults() {
               <span className="text-lg font-medium text-gray-800 mt-1">{data.ram}</span>
             </div>
           </div>
-
           {/* Debug info to verify data structure */}
           <div className="mt-4 text-xs text-gray-500 border-t pt-2">
             <div className="overflow-hidden text-ellipsis">
@@ -291,7 +405,6 @@ export default function CalculateResults() {
             </div>
           </div>
         </motion.div>
-
         {/* Bottleneck Analysis Chart */}
         {chartData.length > 0 && (
           <motion.div 
@@ -362,18 +475,61 @@ export default function CalculateResults() {
           transition={{ duration: 0.5, delay: 0.8 }}
         >
           <Button 
-            onPress={() => {
-              window.location.href = '/'; 
-            }} 
-            className="px-6 py-3"
+            onPress={handleBackClick}
+            className="px-6 py-3 bg-gray-600 hover:bg-gray-700"
           >
             Back to Home
           </Button>
-          <Button onPress={() => window.print()} className="px-6 py-3 bg-green-600 hover:bg-green-700">
-            Save Results
-          </Button>
+          
+          {/* Save Results Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                className={`px-6 py-3 ${isSaving ? 'bg-blue-400' : 'bg-green-600 hover:bg-green-700'} flex items-center gap-2`}
+                isDisabled={isSaving}
+              >
+                <SaveIcon size={18} />
+                {isSaving ? 'Saving...' : 'Save Results'}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-[180px]">
+              <DropdownMenuItem 
+                className="flex items-center gap-2" 
+                onClick={handleSaveAsPDF}
+              >
+                <FileDown size={16} />
+                <span>Save as PDF</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                className="flex items-center gap-2" 
+                onClick={saveBuildToProfile}
+              >
+                <User size={16} />
+                <span>Save to Profile</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </motion.div>
       </div>
+      
+      {/* Confirmation Modal */}
+      <ConfirmationModal 
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={() => router.push('/')}
+        onSave={saveBuildToProfile}
+      />
+      
+      {/* Add styles for success animation */}
+      <style jsx global>{`
+        @keyframes progress {
+          0% { width: 0; }
+          100% { width: 100%; }
+        }
+        .animate-progress {
+          animation: progress 1.5s ease-in-out;
+        }
+      `}</style>
     </div>
   )
 }
