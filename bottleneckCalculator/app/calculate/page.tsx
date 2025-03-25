@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation'
 import { Button } from '../components/ui'
 import { motion } from 'framer-motion'
 import { HardwareChart } from '../components/HardwareChart'
-import { useSession } from 'next-auth/react'
 import { ConfirmationModal } from '../components/ConfirmationModal'
 import {
   DropdownMenu,
@@ -49,7 +48,6 @@ export default function CalculateResults() {
   const [isSaving, setIsSaving] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
   const router = useRouter()
-  const { data: session, status } = useSession()
 
   useEffect(() => {
     // Get data from localStorage
@@ -208,11 +206,17 @@ export default function CalculateResults() {
     
     // Show loading state
     setIsSaving(true);
+    type FormData = {
+      budget?: string;
+      cpuIntensive?: string;
+      gpuIntensive?: string;
+      gaming?: string;
+    };
     
     try {
       // Get form values from localStorage if available
       const formDataString = localStorage.getItem('formData');
-      let formData = {};
+      let formData: FormData = {};
       
       if (formDataString) {
         try {
@@ -231,7 +235,7 @@ export default function CalculateResults() {
         cpu_intensive: formData?.cpuIntensive === 'true',
         gpu_intensive: formData?.gpuIntensive === 'true',
         gaming: formData?.gaming === 'true',
-        recomendation: data.recomendation,
+        recommendations: data.recomendation,
         result: data.result
       };
       
@@ -476,7 +480,7 @@ export default function CalculateResults() {
         >
           <Button 
             onPress={handleBackClick}
-            className="px-6 py-3 bg-gray-600 hover:bg-gray-700"
+            className="h-11 px-6 bg-gray-600 hover:bg-gray-700 min-w-[160px] flex items-center justify-center"
           >
             Back to Home
           </Button>
@@ -484,24 +488,24 @@ export default function CalculateResults() {
           {/* Save Results Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button 
-                className={`px-6 py-3 ${isSaving ? 'bg-blue-400' : 'bg-green-600 hover:bg-green-700'} flex items-center gap-2`}
-                isDisabled={isSaving}
+              <button 
+                className={`h-11 px-6 rounded-lg flex items-center justify-center gap-2 min-w-[160px] ${isSaving ? 'bg-blue-400 cursor-not-allowed' : 'bg-emerald-500 hover:bg-emerald-600 cursor-pointer'} text-white font-medium`}
+                disabled={isSaving}
               >
                 <SaveIcon size={18} />
                 {isSaving ? 'Saving...' : 'Save Results'}
-              </Button>
+              </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-[180px]">
+            <DropdownMenuContent side="bottom" align="end" className="min-w-[180px] z-50">
               <DropdownMenuItem 
-                className="flex items-center gap-2" 
+                className="flex items-center gap-2 cursor-pointer" 
                 onClick={handleSaveAsPDF}
               >
                 <FileDown size={16} />
                 <span>Save as PDF</span>
               </DropdownMenuItem>
               <DropdownMenuItem 
-                className="flex items-center gap-2" 
+                className="flex items-center gap-2 cursor-pointer" 
                 onClick={saveBuildToProfile}
               >
                 <User size={16} />

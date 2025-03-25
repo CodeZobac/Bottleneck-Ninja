@@ -10,14 +10,58 @@ interface BuildAnalysisProps {
 }
 
 export function BuildAnalysis({ build }: BuildAnalysisProps) {
-  // Format recommendations if it's a string
-  const recommendations = Array.isArray(build.recomendation)
-    ? build.recomendation
-    : typeof build.recomendation === "string"
-    ? build.recomendation
-        .split("\\n")
-        .filter((item) => item.trim().length > 0)
-    : [];
+  // Format recommendations ensuring they display properly from database
+  const getRecommendations = (): string[] => {
+    try {
+      // Check for recommendations in both property names (with and without 's')
+      const recommendationData = build.recommendations;
+      
+      // If already an array, return it directly
+      if (Array.isArray(recommendationData)) {
+        return recommendationData;
+      }
+      
+      // If it's a string, try to parse it as JSON first (in case it's a stringified array)
+      if (typeof recommendationData === "string") {
+        try {
+          const parsedRecommendation = JSON.parse(recommendationData);
+          if (Array.isArray(parsedRecommendation)) {
+            return parsedRecommendation;
+          }
+          // If parsed but not an array, handle as string
+          return recommendationData
+            .split("\\n")
+            .filter(item => item.trim().length > 0);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (e) {
+          // If JSON parsing fails, split by newlines
+          return recommendationData
+            .split("\\n")
+            .filter(item => item.trim().length > 0);
+        }
+      }
+      
+      // Handle case where it might be stored as a JSONB object in database but not properly parsed
+      if (recommendationData && typeof recommendationData === "object") {
+        // Try to access it as if it were an array-like object with numeric keys
+        const objValues = Object.values(recommendationData);
+        if (objValues.length > 0) {
+          return objValues.map(item => String(item));
+        }
+      }
+      
+      // For debugging
+      console.log('Recommendation data type:', typeof recommendationData);
+      console.log('Recommendation data:', recommendationData);
+      
+      return [];
+    } catch (error) {
+      console.error("Error parsing recommendations:", error);
+      return [];
+    }
+  };
+  
+  const recommendations = getRecommendations();
 
   // Prepare chart data
   const chartData = build.result?.hardware_analysis?.estimated_impact
@@ -351,8 +395,13 @@ export function BuildAnalysis({ build }: BuildAnalysisProps) {
       >
         <Button
           onPress={() => window.print()}
-          className="px-6 py-3 bg-green-600 hover:bg-green-700"
+          className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 min-w-[150px] flex items-center justify-center gap-2"
         >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
           Export PDF
         </Button>
       </motion.div>

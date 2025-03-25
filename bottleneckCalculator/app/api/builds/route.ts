@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       recommendations: Array.isArray(buildData.recomendation) 
         ? buildData.recomendation 
         : typeof buildData.recomendation === 'string'
-          ? buildData.recomendation.split('\\n').filter(item => item.trim().length > 0)
+          ? buildData.recomendation.split('\\n').filter((item: string) => item.trim().length > 0)
           : [],
       result: buildData.result
     }).select();

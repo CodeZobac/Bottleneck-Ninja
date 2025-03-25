@@ -9,7 +9,7 @@ export interface HardwareBuild {
   cpu_intensive?: boolean;
   gpu_intensive?: boolean;
   gaming?: boolean;
-  recomendation?: string[] | string;
+  recommendations?: string[] | string;
   result: {
     agreement: boolean;
     components: {

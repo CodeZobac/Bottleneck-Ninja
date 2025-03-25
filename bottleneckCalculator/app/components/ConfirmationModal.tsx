@@ -1,10 +1,10 @@
 "use client";
-
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { AlertTriangle, Save, X } from "lucide-react";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -35,64 +35,65 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop overlay */}
+          {/* Backdrop overlay - made fully clickable to close modal */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 cursor-pointer"
           />
           
           {/* Modal */}
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            transition={{ type: "spring", bounce: 0.2 }}
-            className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl bg-white shadow-xl"
-          >
-            <div className="p-6">
-              <div className="flex items-center justify-center mb-6">
-                <div className="rounded-full bg-yellow-100 p-3">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-yellow-500"
+          <div className="fixed inset-0 flex items-center justify-center z-50 p-4 pointer-events-none">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+              className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl border border-gray-200 pointer-events-auto"
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-center mb-6">
+                  <div className="rounded-full bg-amber-100 p-4">
+                    <AlertTriangle size={28} className="text-amber-500" />
+                  </div>
+                </div>
+                <h3 className="mb-2 text-center text-xl font-bold text-gray-800">Unsaved Changes</h3>
+                <p className="mb-8 text-center text-gray-600">
+                  Your analysis results will not be saved if you leave this page. Would you like to save your build before continuing?
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center sm:justify-between">
+                  <Button
+                    intent="secondary"
+                    appearance="outline"
+                    className="px-4 py-2 flex-1"
+                    onPress={onConfirm}
                   >
-                    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                    <line x1="12" y1="9" x2="12" y2="13" />
-                    <line x1="12" y1="17" x2="12.01" y2="17" />
-                  </svg>
+                    Continue Without Saving
+                  </Button>
+                  <Button
+                    intent="primary"
+                    appearance="solid"
+                    className="bg-emerald-500 hover:bg-emerald-600 px-4 py-2 flex-1 flex items-center justify-center gap-2"
+                    onPress={handleSaveClick}
+                  >
+                    <Save size={18} />
+                    Save to Profile
+                  </Button>
                 </div>
               </div>
-              <h3 className="mb-2 text-center text-xl font-bold">Unsaved Changes</h3>
-              <p className="mb-6 text-center text-gray-600">
-                Your analysis results will not be saved if you leave this page. Would you like to save your build before continuing?
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                <Button
-                  className="bg-gray-200 hover:bg-gray-300 text-gray-800"
-                  onPress={onConfirm}
-                >
-                  Continue Without Saving
-                </Button>
-                <Button
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                  onPress={handleSaveClick}
-                >
-                  Save to Profile
-                </Button>
-              </div>
-            </div>
-          </motion.div>
+              
+              {/* Close button */}
+              <button 
+                onClick={onClose}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-white/80 hover:bg-white rounded-full p-1"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>

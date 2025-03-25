@@ -5,7 +5,7 @@
 
 :root {
   /* Light mode variables */
-  --bg: 0 0% 100%; /* white background */
+  --bg: rgba(215, 215, 215, 1); /* white background */
   --fg: 222 47% 11%; /* dark text */
   --primary: 221 83% 53%; /* blue */
   --border: 220 13% 91%;
