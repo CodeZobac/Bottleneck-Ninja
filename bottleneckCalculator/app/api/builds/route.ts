@@ -63,6 +63,7 @@ export async function GET() {
         { error: "You must be logged in to view builds" },
         { status: 401 }
       );
+      
     }
 
     // Get builds for the authenticated user

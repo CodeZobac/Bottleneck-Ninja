@@ -12,7 +12,6 @@ import {
 import { useTheme } from "next-themes"
 import { signIn, signOut, useSession } from "next-auth/react"
 import { Avatar, Menu } from "./ui"
-import Link from "next/link"
 
 
 

@@ -1,17 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/auth/auth-options";
 import { supabase } from "@/lib/database/supabase";
 
-// Get a single build by ID
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-
-    // Check if user is authenticated
     if (!session?.user) {
       return NextResponse.json(
         { error: "You must be logged in to view builds" },
@@ -19,9 +14,7 @@ export async function GET(
       );
     }
 
-    const { id } = params;
-
-    // Get the build with the specified ID
+    const id = request.nextUrl.pathname.split('/').pop();
     const { data, error } = await supabase
       .from("builds")
       .select("*")
@@ -36,8 +29,7 @@ export async function GET(
         { status: 404 }
       );
     }
-
-    return NextResponse.json({ build: data }, { status: 200 });
+    return NextResponse.json({ build: data });
   } catch (error) {
     console.error("Error in GET /api/builds/[id]:", error);
     return NextResponse.json(
@@ -47,15 +39,9 @@ export async function GET(
   }
 }
 
-// Delete a build by ID
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
-    // Check if user is authenticated
     if (!session?.user) {
       return NextResponse.json(
         { error: "You must be logged in to delete builds" },
@@ -63,15 +49,13 @@ export async function DELETE(
       );
     }
     
-    const { id } = params;
-    
-    // First check if the build belongs to the user
+    const id = request.nextUrl.pathname.split('/').pop();
     const { data: buildData, error: buildError } = await supabase
       .from("builds")
       .select("user_id")
       .eq("id", id)
       .single();
-      
+
     if (buildError || !buildData) {
       console.error("Error fetching build:", buildError);
       return NextResponse.json(
@@ -79,21 +63,19 @@ export async function DELETE(
         { status: 404 }
       );
     }
-    
-    // Check ownership
+
     if (buildData.user_id !== session.user.id) {
       return NextResponse.json(
         { error: "You do not have permission to delete this build" },
         { status: 403 }
       );
     }
-    
-    // Delete the build
+
     const { error: deleteError } = await supabase
       .from("builds")
       .delete()
       .eq("id", id);
-      
+
     if (deleteError) {
       console.error("Error deleting build:", deleteError);
       return NextResponse.json(
@@ -101,8 +83,8 @@ export async function DELETE(
         { status: 500 }
       );
     }
-    
-    return NextResponse.json({ success: true }, { status: 200 });
+
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error in DELETE /api/builds/[id]:", error);
     return NextResponse.json(
