@@ -2,15 +2,9 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
-
-// Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface FirstTimeSetupProps {
   session: any;
@@ -53,17 +47,25 @@ export default function FirstTimeSetup({ session, onComplete }: FirstTimeSetupPr
     }
 
     try {
-      const { error: supabaseError } = await supabase
-        .from('user_preferences')
-        .insert({
-          email: session.user.email,
+      // Call the API endpoint
+      const response = await fetch('/api/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           budget: parseFloat(budget),
           cpu_intensive: cpuIntensive,
           gpu_intensive: gpuIntensive,
           gaming: gaming
-        });
+        }),
+      });
 
-      if (supabaseError) throw supabaseError;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save preferences');
+      }
+      
       onComplete();
     } catch (err: any) {
       console.error("Error saving preferences:", err);
