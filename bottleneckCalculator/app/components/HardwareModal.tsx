@@ -105,7 +105,7 @@ export function HardwareModal() {
                 cpu: cpuSelection,
                 gpu: gpuSelection,
                 ram: ramSelection,
-                recomendation: response.recomendation || [],
+                recommendations: response.recomendation || [],
                 result: {
                   agreement: response.result.agreement || false,
                   components: response.result.components || {

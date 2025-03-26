@@ -143,7 +143,7 @@ const Button: React.FC<ButtonProps> = ({
     -ms-user-select: none;
     font-family: "Inter", sans-serif;
     letter-spacing: -0.05em;
-    font-weight: 500;
+    font-weight: 800;
     font-size: 1em;
     color: rgba(50, 50, 50, 1);
     -webkit-font-smoothing: antialiased;

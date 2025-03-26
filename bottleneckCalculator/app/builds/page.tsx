@@ -7,6 +7,7 @@ import { HardwareBuild } from "./types";
 import { BuildAnalysis } from "./components/BuildAnalysis";
 import Link from "next/link";
 import { ChevronDown, ChevronUp,Trash2 } from "lucide-react";
+import { HeaderLogo } from "../components/HeaderLogo";
 
 export default function BuildsPage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -163,8 +164,17 @@ export default function BuildsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row gap-6">
+        <Link href={"/"}>
+          <HeaderLogo style={{ 
+            position: 'absolute', 
+            top: '1.5rem', 
+            left: 'calc(30vw - 35rem)', 
+            marginLeft: '-3rem',
+            paddingBottom: '1rem',
+          }} />
+        </Link>
         {/* Left Sidebar - Build List */}
-        <div className="w-full md:w-1/3 lg:w-1/4 md:mt-[72px]">
+        <div className="w-full md:w-1/3 lg:w-1/4 md:mt-[132px]"> {/* Changed from md:mt-[72px] to md:mt-[120px] */}
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <div className="p-4 bg-blue-600 text-white">
               <h2 className="text-xl font-bold">Your PC Builds</h2>

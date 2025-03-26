@@ -19,6 +19,13 @@ export async function POST(request: NextRequest) {
     // Get build data from request
     const buildData = await request.json();
 
+    // Ensure recommendations is properly formatted for JSONB
+    const recommendationsData = Array.isArray(buildData.recommendations) 
+      ? buildData.recommendations 
+      : typeof buildData.recommendations === 'string'
+        ? buildData.recommendations.split('\\n').filter((item: string) => item.trim().length > 0)
+        : [];
+
     // Insert build data into the database
     const { data, error } = await supabase.from("builds").insert({
       user_id: session.user.id,
@@ -26,14 +33,7 @@ export async function POST(request: NextRequest) {
       gpu: buildData.gpu,
       ram: buildData.ram,
       budget: buildData.budget,
-      cpu_intensive: buildData.cpu_intensive,
-      gpu_intensive: buildData.gpu_intensive,
-      gaming: buildData.gaming,
-      recommendations: Array.isArray(buildData.recomendation) 
-        ? buildData.recomendation 
-        : typeof buildData.recomendation === 'string'
-          ? buildData.recomendation.split('\\n').filter((item: string) => item.trim().length > 0)
-          : [],
+      recommendations: recommendationsData, // Fixed property name and ensure it's properly formatted for JSONB
       result: buildData.result
     }).select();
 

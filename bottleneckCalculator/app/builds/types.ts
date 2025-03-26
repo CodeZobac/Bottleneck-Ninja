@@ -5,10 +5,6 @@ export interface HardwareBuild {
   cpu: string;
   gpu: string;
   ram: string;
-  budget?: number;
-  cpu_intensive?: boolean;
-  gpu_intensive?: boolean;
-  gaming?: boolean;
   recommendations?: string[] | string;
   result: {
     agreement: boolean;

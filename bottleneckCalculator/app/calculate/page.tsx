@@ -36,7 +36,7 @@ interface BottleneckData {
   cpu: string;
   gpu: string;
   ram: string;
-  recomendation: string[] | string;
+  recommendations: string[] | string;
   timestamp: string;
 }
 
@@ -58,14 +58,14 @@ export default function CalculateResults() {
         const parsedData = JSON.parse(storedData) as BottleneckData
         
         // Format recommendations if it's a string
-        if (typeof parsedData.recomendation === 'string') {
+        if (typeof parsedData.recommendations === 'string') {
           // Convert string to array by splitting on newlines
-          parsedData.recomendation = (parsedData.recomendation as string)
+          parsedData.recommendations = (parsedData.recommendations as string)
             .split('\\n')
             .filter(item => item.trim().length > 0)
-        } else if (!Array.isArray(parsedData.recomendation)) {
+        } else if (!Array.isArray(parsedData.recommendations)) {
           // Handle case where it's neither string nor array
-          parsedData.recomendation = [];
+          parsedData.recommendations = [];
         }
         
         setData(parsedData)
@@ -206,36 +206,14 @@ export default function CalculateResults() {
     
     // Show loading state
     setIsSaving(true);
-    type FormData = {
-      budget?: string;
-      cpuIntensive?: string;
-      gpuIntensive?: string;
-      gaming?: string;
-    };
     
     try {
-      // Get form values from localStorage if available
-      const formDataString = localStorage.getItem('formData');
-      let formData: FormData = {};
-      
-      if (formDataString) {
-        try {
-          formData = JSON.parse(formDataString);
-        } catch (error) {
-          console.error('Error parsing form data:', error);
-        }
-      }
-      
       // Create build object
       const build: HardwareBuild = {
         cpu: data.cpu,
         gpu: data.gpu,
         ram: data.ram,
-        budget: formData?.budget ? parseFloat(formData.budget as string) : undefined,
-        cpu_intensive: formData?.cpuIntensive === 'true',
-        gpu_intensive: formData?.gpuIntensive === 'true',
-        gaming: formData?.gaming === 'true',
-        recommendations: data.recomendation,
+        recommendations: data.recommendations,
         result: data.result
       };
       
@@ -449,7 +427,7 @@ export default function CalculateResults() {
           </h2>
           
           <div className="space-y-6">
-            {Array.isArray(data.recomendation) && data.recomendation.map((recommendation, index) => (
+            {Array.isArray(data.recommendations) && data.recommendations.map((recommendations, index) => (
               <motion.div 
                 key={index}
                 className="p-4 border-l-4 border-blue-500 bg-blue-50 rounded-r-lg"
@@ -457,14 +435,14 @@ export default function CalculateResults() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.5 + (index * 0.1) }}
               >
-                <p className="text-gray-800">{recommendation}</p>
+                <p className="text-gray-800">{recommendations}</p>
               </motion.div>
             ))}
             
-            {(!Array.isArray(data.recomendation) || data.recomendation.length === 0) && (
+            {(!Array.isArray(data.recommendations) || data.recommendations.length === 0) && (
               <div className="p-4 border-l-4 border-yellow-500 bg-yellow-50 rounded-r-lg">
                 <p className="text-gray-800">
-                  Your hardware combination appears to be well-balanced. No specific recommendations at this time.
+                  Your hardware combination appears to be well-balanced. No specific recomendations at this time.
                 </p>
               </div>
             )}

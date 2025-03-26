@@ -301,7 +301,7 @@ export function BuildAnalysis({ build }: BuildAnalysisProps) {
         </motion.div>
       )}
 
-      {/* Recommendations Section */}
+      {/* Recomendations Section */}
       <motion.div
         className="bg-white rounded-xl shadow-lg p-6 mb-8"
         initial={{ opacity: 0, y: 20 }}
@@ -310,12 +310,12 @@ export function BuildAnalysis({ build }: BuildAnalysisProps) {
       >
         <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
           <span className="text-blue-600 mr-2">★</span>
-          Personalized Recommendations
+          Personalized Recomendations
         </h2>
 
         <div className="space-y-6">
           {Array.isArray(recommendations) && recommendations.length > 0 ? (
-            recommendations.map((recommendation, index) => (
+            recommendations.map((recommendations, index) => (
               <motion.div
                 key={index}
                 className="p-4 border-l-4 border-blue-500 bg-blue-50 rounded-r-lg"
@@ -323,7 +323,7 @@ export function BuildAnalysis({ build }: BuildAnalysisProps) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
               >
-                <p className="text-gray-800">{recommendation}</p>
+                <p className="text-gray-800">{recommendations}</p>
               </motion.div>
             ))
           ) : (
@@ -335,56 +335,6 @@ export function BuildAnalysis({ build }: BuildAnalysisProps) {
           )}
         </div>
       </motion.div>
-
-      {/* Additional Information */}
-      {(build.budget || build.cpu_intensive || build.gpu_intensive || build.gaming) && (
-        <motion.div
-          className="bg-white rounded-xl shadow-lg p-6 mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
-            Build Requirements
-          </h2>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {build.budget && (
-              <div className="bg-blue-50 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-blue-700">Budget</h3>
-                <p className="text-lg font-bold">${build.budget.toFixed(2)}</p>
-              </div>
-            )}
-
-            {build.cpu_intensive !== undefined && (
-              <div className={`rounded-lg p-4 ${build.cpu_intensive ? "bg-green-50" : "bg-gray-50"}`}>
-                <h3 className="text-sm font-medium text-gray-700">CPU Intensive</h3>
-                <p className={`text-lg font-bold ${build.cpu_intensive ? "text-green-600" : "text-gray-500"}`}>
-                  {build.cpu_intensive ? "Yes" : "No"}
-                </p>
-              </div>
-            )}
-
-            {build.gpu_intensive !== undefined && (
-              <div className={`rounded-lg p-4 ${build.gpu_intensive ? "bg-green-50" : "bg-gray-50"}`}>
-                <h3 className="text-sm font-medium text-gray-700">GPU Intensive</h3>
-                <p className={`text-lg font-bold ${build.gpu_intensive ? "text-green-600" : "text-gray-500"}`}>
-                  {build.gpu_intensive ? "Yes" : "No"}
-                </p>
-              </div>
-            )}
-
-            {build.gaming !== undefined && (
-              <div className={`rounded-lg p-4 ${build.gaming ? "bg-green-50" : "bg-gray-50"}`}>
-                <h3 className="text-sm font-medium text-gray-700">Gaming</h3>
-                <p className={`text-lg font-bold ${build.gaming ? "text-green-600" : "text-gray-500"}`}>
-                  {build.gaming ? "Yes" : "No"}
-                </p>
-              </div>
-            )}
-          </div>
-        </motion.div>
-      )}
 
       {/* Bottom Actions */}
       <motion.div
