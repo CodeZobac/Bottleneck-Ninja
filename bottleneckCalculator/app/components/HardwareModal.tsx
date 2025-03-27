@@ -8,7 +8,7 @@ import { RamMenu } from "./ModalMenuRam"
 import dynamic from 'next/dynamic'
 import apiCall from "../api/apiCall"
 import { useRouter } from 'next/navigation'
-import Buton from "./ui/buton"
+import MainButton from "./ui/buton"
 
 // Import Lottie client-side only
 const Lottie = dynamic(() => import('lottie-react'), { 
@@ -72,9 +72,15 @@ export function HardwareModal() {
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
-      <div className="flex justify-center items-center w-full my-4">
-        <Buton onClick={() => handleModalOpen()}>Calculate Bottleneck</Buton>
+      <div className="w-full">
+        <MainButton 
+          onClick={() => handleModalOpen()}
+          className="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white text-lg font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+        >
+          Calculate Bottleneck
+        </MainButton>
       </div>
+      
       <Modal.Content isBlurred>
         <Modal.Header>
           <Modal.Title>Select Hardware Components</Modal.Title>

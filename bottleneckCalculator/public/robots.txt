@@ -1,0 +1,14 @@
+# Bottleneck Ninja robots.txt
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Allow NextAuth routes
+Allow: /api/auth/
+
+# Disallow other API routes
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://bottleneck-ninja.vercel.app/sitemap.xml

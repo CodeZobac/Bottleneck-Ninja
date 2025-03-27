@@ -16,10 +16,8 @@ import { Avatar, Menu } from "./ui"
 
 
 export function HeaderMenu() {
-  const { resolvedTheme, theme, setTheme } = useTheme()
+  const { resolvedTheme, setTheme } = useTheme()
   const { data: session } = useSession()
-  
-  console.log("Current theme:", theme, "Resolved theme:", resolvedTheme);
   
   // If not signed in, show guest menu
   if (!session) {
@@ -30,7 +28,7 @@ export function HeaderMenu() {
             alt="Guest" 
             size="large" 
             src="/icon.jpg"
-            className="bg-gray-200 w-12 h-12"
+            className="bg-gray-200 w-12 h-12 mr-[100px]"
           />
         </Menu.Trigger>
         <Menu.Content placement="bottom" showArrow className="sm:min-w-64">
@@ -77,7 +75,8 @@ export function HeaderMenu() {
         <Avatar 
           alt={session.user?.name || "User"} 
           size="large" 
-          src={session.user?.image} 
+          src={session.user?.image}
+          className="bg-gray-200 w-12 h-12 mr-[100px]" 
         />
       </Menu.Trigger>
       <Menu.Content placement="bottom" showArrow className="sm:min-w-64">
