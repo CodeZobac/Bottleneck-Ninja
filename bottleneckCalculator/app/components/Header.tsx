@@ -14,7 +14,9 @@ const Header = () => {
       style={{ 
         position: 'relative',
         zIndex: 10, 
-        height: 'var(--header-height, 120px)'
+        height: 'var(--header-height, 120px)',
+        borderBottom: '1px solid rgba(100, 100, 100, 0.3)',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
       }}
     >
       {/* Logo section */}

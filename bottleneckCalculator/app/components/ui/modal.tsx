@@ -12,6 +12,16 @@ import {
 import { tv, type VariantProps } from "tailwind-variants"
 
 import { Dialog } from "./dialog"
+import { useTheme } from "next-themes"
+import { useEffect, useState } from "react"
+import { cn } from "@/utils/classes"
+
+// Create a context to share theme information throughout modal components
+interface ModalContextProps {
+  isDarkTheme: boolean;
+}
+
+const ModalContext = React.createContext<ModalContextProps>({ isDarkTheme: false })
 
 const modalOverlayStyles = tv({
   base: [
@@ -70,7 +80,23 @@ const modalContentStyles = tv({
 
 type ModalProps = DialogTriggerProps
 const Modal = (props: ModalProps) => {
-  return <DialogTrigger {...props} />
+  // Add theme awareness
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  
+  // Ensure we only render theme-specific elements after component mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  // Theme-aware styling
+  const isDarkTheme = mounted && resolvedTheme === 'dark';
+  
+  return (
+    <ModalContext.Provider value={{ isDarkTheme }}>
+      <DialogTrigger {...props} />
+    </ModalContext.Provider>
+  )
 }
 
 interface ModalContentProps
@@ -98,7 +124,18 @@ const ModalContent = ({
   closeButton = true,
   ...props
 }: ModalContentProps) => {
+  const { isDarkTheme } = React.useContext(ModalContext);
   const _isDismissable = role === "alertdialog" ? false : isDismissable
+  
+  // Add theme-aware classes
+  const themeOverlayClass = isDarkTheme 
+    ? 'bg-black/60' 
+    : 'bg-dark/15';
+  
+  const themeContentClass = isDarkTheme
+    ? 'bg-gray-800 text-gray-100 ring-gray-700' 
+    : 'bg-white text-gray-900 ring-dark/5';
+  
   return (
     <ModalOverlayPrimitive
       isDismissable={_isDismissable}
@@ -106,7 +143,11 @@ const ModalContent = ({
         return modalOverlayStyles({
           ...renderProps,
           isBlurred,
-          className: `overflow-visible ${className || ''}`
+          className: cn(
+            'overflow-visible',
+            !isBlurred && themeOverlayClass,
+            className
+          )
         })
       })}
       {...props}
@@ -116,13 +157,17 @@ const ModalContent = ({
           modalContentStyles({
             ...renderProps,
             size,
-            className: `modal-content overflow-visible ${className || ''}`
+            className: cn(
+              'modal-content overflow-visible',
+              themeContentClass,
+              className
+            )
           })
         )}
         {...props}
       >
         {(values) => (
-          <Dialog role={role} className="overflow-visible">
+          <Dialog role={role} className={cn("overflow-visible", isDarkTheme && "text-gray-100")}>
             {typeof children === "function" ? children(values) : children}
             {closeButton && (
               <Dialog.CloseIndicator close={values.state.close} isDismissable={_isDismissable} />

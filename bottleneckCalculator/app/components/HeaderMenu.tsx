@@ -13,8 +13,6 @@ import { useTheme } from "next-themes"
 import { signIn, signOut, useSession } from "next-auth/react"
 import { Avatar, Menu } from "./ui"
 
-
-
 export function HeaderMenu() {
   const { resolvedTheme, setTheme } = useTheme()
   const { data: session } = useSession()
@@ -22,7 +20,7 @@ export function HeaderMenu() {
   // If not signed in, show guest menu
   if (!session) {
     return (
-      <Menu>
+      <Menu customOffset={{ x: -5 }}>
         <Menu.Trigger aria-label="Open Menu">
           <Avatar 
             alt="Guest" 
@@ -31,7 +29,13 @@ export function HeaderMenu() {
             className="bg-gray-200 w-12 h-12 mr-[100px]"
           />
         </Menu.Trigger>
-        <Menu.Content placement="bottom" showArrow className="sm:min-w-64">
+        <Menu.Content 
+          placement="bottom" 
+          showArrow={false} // Removing the arrow for cleaner appearance
+          offset={15}
+          alignWithTrigger
+          className="sm:min-w-64"
+        >
           <Menu.Header separator>
             <span className="block">Guest</span>
             <span className="font-normal text-muted-fg">Not signed in</span>
@@ -70,7 +74,7 @@ export function HeaderMenu() {
   }
   
   return (
-    <Menu>
+    <Menu customOffset={{ x: -5 }}>
       <Menu.Trigger aria-label="Open Menu">
         <Avatar 
           alt={session.user?.name || "User"} 
@@ -79,7 +83,13 @@ export function HeaderMenu() {
           className="bg-gray-200 w-12 h-12 mr-[100px]" 
         />
       </Menu.Trigger>
-      <Menu.Content placement="bottom" showArrow className="sm:min-w-64">
+      <Menu.Content 
+        placement="bottom" 
+        showArrow={false} // Removing the arrow for cleaner appearance
+        offset={15}
+        alignWithTrigger
+        className="sm:min-w-64"
+      >
         <Menu.Header separator>
           <span className="block">{session.user?.name}</span>
           <span className="font-normal text-muted-fg">{session.user?.email}</span>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import apiCall, { CpuCategory } from "../api/apiCall"
+import { useTheme } from "next-themes"
 
 interface CpuMenuProps {
   selectedCpu: string;
@@ -15,9 +16,16 @@ export function CpuMenu({ selectedCpu, setSelectedCpu }: CpuMenuProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  
+  // Theme-aware styling
+  const isDarkTheme = mounted && resolvedTheme === 'dark'
   
   useEffect(() => {
     fetchCpuData()
+    // Mount component for theme detection
+    setMounted(true)
   }, [])
   
   // Focus search input when menu opens
@@ -115,7 +123,7 @@ export function CpuMenu({ selectedCpu, setSelectedCpu }: CpuMenuProps) {
         <button 
           id="cpu-menu-trigger"
           onClick={() => setIsMenuOpen(true)}
-          className={`w-full p-2 border ${selectedCpu ? 'border-blue-300' : 'border-gray-300'} rounded-md bg-white text-left flex justify-between items-center`}
+          className={`w-full p-2 border ${selectedCpu ? 'border-blue-300' : 'border-gray-300'} rounded-md ${isDarkTheme ? 'bg-gray-800 text-white' : 'bg-white text-left'} flex justify-between items-center`}
           type="button"
         >
           {isMenuOpen ? (
@@ -125,17 +133,17 @@ export function CpuMenu({ selectedCpu, setSelectedCpu }: CpuMenuProps) {
               onChange={(e) => setSearchTerm(e.target.value)}
               onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => e.key === 'Escape' && setIsMenuOpen(false)}
-              className="w-full border-none outline-none bg-transparent p-0 m-0 focus:ring-0"
+              className={`w-full border-none outline-none bg-transparent p-0 m-0 focus:ring-0 ${isDarkTheme ? 'text-white placeholder-gray-400' : 'text-black placeholder-gray-500'}`}
               placeholder="Search CPUs..."
               autoFocus
             />
           ) : (
-            <span className={`truncate ${selectedCpu ? 'text-black' : 'text-gray-500'}`}>
+            <span className={`truncate ${selectedCpu ? (isDarkTheme ? 'text-white' : 'text-black') : (isDarkTheme ? 'text-gray-400' : 'text-gray-500')}`}>
               {selectedCpu || "Select your CPU"}
             </span>
           )}
           <svg 
-            className={`h-4 w-4 ml-2 transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} 
+            className={`h-4 w-4 ml-2 transition-transform ${isMenuOpen ? 'rotate-180' : ''} ${isDarkTheme ? 'text-gray-300' : 'text-gray-600'}`} 
             fill="currentColor" 
             viewBox="0 0 20 20"
           >
@@ -145,24 +153,26 @@ export function CpuMenu({ selectedCpu, setSelectedCpu }: CpuMenuProps) {
 
         {/* Menu dropdown */}
         {isMenuOpen && (
-          <div className="absolute left-0 right-0 mt-1 py-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-80 overflow-auto z-50">
+          <div className={`absolute left-0 right-0 mt-1 py-1 ${isDarkTheme ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-300'} rounded-md shadow-lg max-h-80 overflow-auto z-50`}>
             {/* Search results count */}
-            <div className="px-2 py-1 text-xs text-gray-500 border-b">
+            <div className={`px-2 py-1 text-xs ${isDarkTheme ? 'text-gray-400 border-b border-gray-700' : 'text-gray-500 border-b'}`}>
               {totalCpuCount} CPUs found
             </div>
             
             {filteredCategories.length === 0 ? (
-              <div className="p-3 text-center text-gray-500">No CPUs match your search</div>
+              <div className={`p-3 text-center ${isDarkTheme ? 'text-gray-400' : 'text-gray-500'}`}>No CPUs match your search</div>
             ) : (
               filteredCategories.map(category => (
                 <div key={category.id}>
-                  <div className="px-3 py-1 text-xs font-semibold text-gray-500 bg-gray-50">
+                  <div className={`px-3 py-1 text-xs font-semibold ${isDarkTheme ? 'text-gray-400 bg-gray-900' : 'text-gray-500 bg-gray-50'}`}>
                     {category.name}
                   </div>
                   {category.models.map(cpu => (
                     <button
                       key={cpu.id}
-                      className={`w-full text-left px-3 py-2 text-sm ${selectedCpu === cpu.name ? 'bg-blue-50' : 'hover:bg-blue-50'} focus:bg-blue-50 focus:outline-none`}
+                      className={`w-full text-left px-3 py-2 text-sm ${selectedCpu === cpu.name 
+                        ? (isDarkTheme ? 'bg-blue-900' : 'bg-blue-50') 
+                        : (isDarkTheme ? 'hover:bg-gray-700' : 'hover:bg-blue-50')} focus:outline-none ${isDarkTheme ? 'focus:bg-gray-700' : 'focus:bg-blue-50'}`}
                       onClick={() => handleCpuSelect(cpu.name)}
                     >
                       {cpu.name}

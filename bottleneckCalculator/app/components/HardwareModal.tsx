@@ -174,12 +174,12 @@ export function HardwareModal() {
                 
                 {/* Selected Components Display */}
                 {(selectedCpu || selectedGpu || selectedRam) && (
-                  <div className="mt-6 p-3 border border-blue-200 bg-blue-50 rounded-md">
+                  <div className="mt-6 p-3 border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/50 rounded-md">
                     <div className="flex justify-between items-center mb-2">
-                      <h3 className="font-medium text-blue-800">Selected Components</h3>
+                      <h3 className="font-medium text-blue-800 dark:text-blue-300">Selected Components</h3>
                       <button 
                         type="button"
-                        className="text-blue-500 hover:text-blue-700 text-sm"
+                        className="text-blue-500 hover:text-blue-700 dark:hover:text-blue-300 text-sm"
                         onClick={clearSelections}
                       >
                         Clear All
@@ -188,14 +188,14 @@ export function HardwareModal() {
                     
                     <div className="space-y-2">
                       {selectedCpu && (
-                        <div className="flex items-center justify-between p-2 border border-blue-300 bg-white rounded-md">
+                        <div className="flex items-center justify-between p-2 border border-blue-300 dark:border-blue-700 bg-white dark:bg-gray-800 rounded-md">
                           <div>
-                            <span className="text-xs text-blue-500 block">CPU</span>
-                            <span className="truncate font-medium">{selectedCpu}</span>
+                            <span className="text-xs text-blue-500 dark:text-blue-400 block">CPU</span>
+                            <span className="truncate font-medium dark:text-gray-200">{selectedCpu}</span>
                           </div>
                           <button 
                             type="button"
-                            className="text-blue-500 hover:text-blue-700"
+                            className="text-blue-500 hover:text-blue-700 dark:hover:text-blue-300"
                             onClick={() => setSelectedCpu("")}
                           >
                             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -206,14 +206,14 @@ export function HardwareModal() {
                       )}
                       
                       {selectedGpu && (
-                        <div className="flex items-center justify-between p-2 border border-blue-300 bg-white rounded-md">
+                        <div className="flex items-center justify-between p-2 border border-blue-300 dark:border-blue-700 bg-white dark:bg-gray-800 rounded-md">
                           <div>
-                            <span className="text-xs text-blue-500 block">GPU</span>
-                            <span className="truncate font-medium">{selectedGpu}</span>
+                            <span className="text-xs text-blue-500 dark:text-blue-400 block">GPU</span>
+                            <span className="truncate font-medium dark:text-gray-200">{selectedGpu}</span>
                           </div>
                           <button 
                             type="button"
-                            className="text-blue-500 hover:text-blue-700"
+                            className="text-blue-500 hover:text-blue-700 dark:hover:text-blue-300"
                             onClick={() => setSelectedGpu("")}
                           >
                             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -224,14 +224,14 @@ export function HardwareModal() {
                       )}
                       
                       {selectedRam && (
-                        <div className="flex items-center justify-between p-2 border border-blue-300 bg-white rounded-md">
+                        <div className="flex items-center justify-between p-2 border border-blue-300 dark:border-blue-700 bg-white dark:bg-gray-800 rounded-md">
                           <div>
-                            <span className="text-xs text-blue-500 block">RAM</span>
-                            <span className="truncate font-medium">{selectedRam}</span>
+                            <span className="text-xs text-blue-500 dark:text-blue-400 block">RAM</span>
+                            <span className="truncate font-medium dark:text-gray-200">{selectedRam}</span>
                           </div>
                           <button 
                             type="button"
-                            className="text-blue-500 hover:text-blue-700"
+                            className="text-blue-500 hover:text-blue-700 dark:hover:text-blue-300"
                             onClick={() => setSelectedRam("")}
                           >
                             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

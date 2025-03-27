@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, use, useId, useMemo } from "react"
+import { useTheme } from "next-themes"
 
 import type { LegendProps } from "recharts"
 import { Legend, ResponsiveContainer, Tooltip } from "recharts"
@@ -21,6 +22,7 @@ type ChartConfig = {
 
 type ChartContextProps = {
   config: ChartConfig
+  isDark: boolean
 }
 
 const ChartContext = createContext<ChartContextProps | null>(null)
@@ -48,14 +50,33 @@ const Chart = ({
 }) => {
   const uniqueId = useId()
   const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
 
   return (
-    <ChartContext.Provider value={{ config }}>
+    <ChartContext.Provider value={{ config, isDark }}>
       <div
         data-chart={chartId}
         ref={ref}
         className={cn(
-          "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-fg [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/80 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-hidden [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-sector]:outline-hidden [&_.recharts-surface]:outline-hidden",
+          "flex aspect-video justify-center text-xs",
+          // Dark mode compatible styles
+          "[&_.recharts-cartesian-axis-tick_text]:fill-muted-fg",
+          "[&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/80",
+          "[&_.recharts-curve.recharts-tooltip-cursor]:stroke-border",
+          "[&_.recharts-dot[stroke='#fff']]:stroke-transparent",
+          isDark ? "[&_.recharts-dot[stroke='#fff']]:stroke-gray-800" : "",
+          "[&_.recharts-layer]:outline-hidden",
+          "[&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border",
+          isDark ? "[&_.recharts-polar-grid-polygon]:stroke-gray-600" : "",
+          isDark ? "[&_.recharts-polar-angle-axis-tick-value]:fill-gray-300" : "",
+          "[&_.recharts-radial-bar-background-sector]:fill-muted",
+          "[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted",
+          "[&_.recharts-reference-line_[stroke='#ccc']]:stroke-border",
+          "[&_.recharts-sector[stroke='#fff']]:stroke-transparent",
+          isDark ? "[&_.recharts-sector[stroke='#fff']]:stroke-gray-800" : "",
+          "[&_.recharts-sector]:outline-hidden",
+          "[&_.recharts-surface]:outline-hidden",
           className,
         )}
         {...props}
@@ -122,7 +143,7 @@ const ChartTooltipContent = ({
     nameKey?: string
     labelKey?: string
   }) => {
-  const { config } = useChart()
+  const { config, isDark } = useChart()
 
   const tooltipLabel = useMemo(() => {
     if (hideLabel || !payload?.length) {
@@ -164,6 +185,7 @@ const ChartTooltipContent = ({
       ref={ref}
       className={cn(
         "grid min-w-[12rem] items-start gap-1.5 rounded-lg border bg-overlay px-3 py-2 text-overlay-fg text-xs shadow-xl",
+        isDark ? "border-gray-700 bg-gray-800 text-gray-200" : "bg-white",
         className,
       )}
     >
@@ -216,10 +238,12 @@ const ChartTooltipContent = ({
                   >
                     <div className="grid gap-1.5">
                       {nestLabel ? tooltipLabel : null}
-                      <span className="text-muted-fg">{itemConfig?.label || item.name}</span>
+                      <span className={isDark ? "text-gray-400" : "text-muted-fg"}>
+                        {itemConfig?.label || item.name}
+                      </span>
                     </div>
                     {item.value && (
-                      <span className="font-medium font-mono text-fg tabular-nums">
+                      <span className={`font-medium font-mono tabular-nums ${isDark ? "text-gray-200" : "text-fg"}`}>
                         {item.value.toLocaleString()}
                       </span>
                     )}
@@ -248,7 +272,7 @@ const ChartLegendContent = ({
     hideIcon?: boolean
     nameKey?: string
   }) => {
-  const { config } = useChart()
+  const { config, isDark } = useChart()
 
   if (!payload?.length) {
     return null
@@ -271,7 +295,8 @@ const ChartLegendContent = ({
           <div
             key={item.value}
             className={cn(
-              "flex items-center gap-1.5 *:data-[slot=icon]:size-3 *:data-[slot=icon]:text-muted-fg",
+              "flex items-center gap-1.5 *:data-[slot=icon]:size-3",
+              isDark ? "*:data-[slot=icon]:text-gray-400" : "*:data-[slot=icon]:text-muted-fg",
             )}
           >
             {itemConfig?.icon && !hideIcon ? (
@@ -284,7 +309,9 @@ const ChartLegendContent = ({
                 }}
               />
             )}
-            {itemConfig?.label}
+            <span className={isDark ? "text-gray-300" : ""}>
+              {itemConfig?.label}
+            </span>
           </div>
         )
       })}

@@ -1,7 +1,5 @@
 "use client"
-
 import * as React from "react"
-
 import { cn } from "@/utils/classes"
 import { IconBulletFill, IconCheck, IconChevronLgRight } from "justd-icons"
 import type {
@@ -27,24 +25,48 @@ import {
 } from "react-aria-components"
 import type { VariantProps } from "tailwind-variants"
 import { tv } from "tailwind-variants"
-
 import { DropdownItemDetails, dropdownItemStyles, dropdownSectionStyles } from "./dropdown"
 import { Keyboard } from "./keyboard"
 import { Popover } from "./popover"
+import { useTheme } from "next-themes"
+import { useEffect, useState } from "react"
 
+// Create a context to share theme information and positioning throughout the menu components
 interface MenuContextProps {
-  respectScreen: boolean
+  respectScreen: boolean;
+  isDarkTheme: boolean;
+  customOffset?: {
+    x?: number;
+  };
 }
 
-const MenuContext = React.createContext<MenuContextProps>({ respectScreen: true })
+const MenuContext = React.createContext<MenuContextProps>({ 
+  respectScreen: true,
+  isDarkTheme: false
+})
 
 interface MenuProps extends MenuTriggerPrimitiveProps {
-  respectScreen?: boolean
+  respectScreen?: boolean;
+  customOffset?: {
+    x?: number;
+  };
 }
 
-const Menu = ({ respectScreen = true, ...props }: MenuProps) => {
+const Menu = ({ respectScreen = true, customOffset, ...props }: MenuProps) => {
+  // Add theme awareness
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  
+  // Ensure we only render theme-specific elements after component mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  // Theme-aware styling
+  const isDarkTheme = mounted && resolvedTheme === 'dark';
+  
   return (
-    <MenuContext.Provider value={{ respectScreen }}>
+    <MenuContext.Provider value={{ respectScreen, isDarkTheme, customOffset }}>
       <MenuTriggerPrimitive {...props}>{props.children}</MenuTriggerPrimitive>
     </MenuContext.Provider>
   )
@@ -87,28 +109,54 @@ interface MenuContentProps<T>
   popoverClassName?: string
   showArrow?: boolean
   respectScreen?: boolean
+  alignWithTrigger?: boolean
+  offset?: number
+  style?: React.CSSProperties
 }
 
 const Content = <T extends object>({
   className,
   showArrow = false,
   popoverClassName,
+  alignWithTrigger = false,
+  offset,
+  style,
   ...props
 }: MenuContentProps<T>) => {
-  const { respectScreen } = React.useContext(MenuContext)
+  const { respectScreen, isDarkTheme, customOffset } = React.useContext(MenuContext)
+  
+  // Add theme-aware classes
+  const themeClass = isDarkTheme 
+    ? 'bg-gray-800 text-gray-100' 
+    : 'bg-white text-gray-900'
+  
+  // Combine custom styles with any offset adjustments
+  const combinedStyles = {
+    ...style,
+    // Apply a more fine-grained adjustment for the offset
+    ...(customOffset?.x !== undefined && alignWithTrigger ? { 
+      '--custom-offset-x': `${customOffset.x}%`,
+      // This allows for more precise control
+      marginLeft: `var(--custom-offset-x)`
+    } : {})
+  }
+  
   return (
     <Popover.Content
       respectScreen={respectScreen}
       showArrow={showArrow}
+      offset={offset}
+      style={combinedStyles}
       className={popover({
         className: cn([
           showArrow && "placement-left:mt-[-0.38rem] placement-right:mt-[-0.38rem]",
+          themeClass,
           popoverClassName
         ])
       })}
       {...props}
     >
-      <MenuPrimitive className={menu({ className })} {...props} />
+      <MenuPrimitive className={menu({ className: cn(className) })} {...props} />
     </Popover.Content>
   )
 }
@@ -120,13 +168,18 @@ interface MenuItemProps
 }
 
 const Item = ({ className, isDanger = false, children, ...props }: MenuItemProps) => {
+  const { isDarkTheme } = React.useContext(MenuContext)
   const textValue = props.textValue || (typeof children === "string" ? children : undefined)
+  
   return (
     <MenuItem
       className={composeRenderProps(className, (className, renderProps) =>
         dropdownItemStyles({
           ...renderProps,
-          className
+          className: cn(
+            className,
+            isDarkTheme && 'hover:bg-gray-700 active:bg-gray-700'
+          )
         })
       )}
       textValue={textValue}
@@ -147,20 +200,36 @@ export interface MenuHeaderProps extends React.ComponentProps<typeof Header> {
   separator?: boolean
 }
 
-const MenuHeader = ({ className, separator = false, ...props }: MenuHeaderProps) => (
-  <Header
-    className={cn(
-      "p-2 text-base font-semibold sm:text-sm",
-      separator && "-mx-1 border-b px-3 pb-[0.625rem]",
-      className
-    )}
-    {...props}
-  />
-)
+const MenuHeader = ({ className, separator = false, ...props }: MenuHeaderProps) => {
+  const { isDarkTheme } = React.useContext(MenuContext)
+  
+  return (
+    <Header
+      className={cn(
+        "p-2 text-base font-semibold sm:text-sm",
+        separator && "-mx-1 border-b px-3 pb-[0.625rem]",
+        isDarkTheme && separator && "border-gray-700",
+        className
+      )}
+      {...props}
+    />
+  )
+}
 
-const MenuSeparator = ({ className, ...props }: SeparatorProps) => (
-  <Separator className={cn("-mx-1 my-1 h-px border-b", className)} {...props} />
-)
+const MenuSeparator = ({ className, ...props }: SeparatorProps) => {
+  const { isDarkTheme } = React.useContext(MenuContext)
+  
+  return (
+    <Separator 
+      className={cn(
+        "-mx-1 my-1 h-px border-b", 
+        isDarkTheme ? "border-gray-700" : "border-gray-200",
+        className
+      )} 
+      {...props} 
+    />
+  )
+}
 
 const Checkbox = ({ className, children, ...props }: MenuItemProps) => (
   <Item className={cn("relative pr-8", className)} {...props}>
@@ -182,7 +251,6 @@ const Radio = ({ className, children, ...props }: MenuItemProps) => (
     {(values) => (
       <>
         {typeof children === "function" ? children(values) : children}
-
         {values.isSelected && (
           <span
             data-slot="menu-radio"

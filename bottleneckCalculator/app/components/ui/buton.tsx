@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useTheme } from 'next-themes';
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -11,6 +12,17 @@ const MainButton: React.FC<ButtonProps> = ({
   onClick,
   className = '' 
 }) => {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Ensure theme is available on client side
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Theme-aware text color
+  const isDark = mounted && resolvedTheme === 'dark';
+
   return (
     <div className="button-wrap">
       <button 
@@ -145,7 +157,7 @@ const MainButton: React.FC<ButtonProps> = ({
     letter-spacing: -0.05em;
     font-weight: 800;
     font-size: 1em;
-    color: rgba(50, 50, 50, 1);
+    color: ${isDark ? 'white' : 'rgba(50, 50, 50, 1)'};
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-shadow: 0em 0.25em 0.05em rgba(0, 0, 0, 0.1);

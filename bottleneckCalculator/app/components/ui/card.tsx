@@ -8,13 +8,13 @@ import { Heading } from "./heading"
 const card = tv({
   slots: {
     root: [
-      "xrkr bg-bg rounded-xl xkd2 [&:has(table)_.ccvgs8x]:border-t [&:has(table)_.x32]:bg-tertiary [&:has(table)]:overflow-hidden border text-fg shadow-sm [&:has(.larhy3):not(:has(.yahnba))>.ccvgs8x]:pt-6 [&:has(.larhy3)]:overflow-hidden [&_table]:overflow-hidden"
+      "xrkr bg-bg dark:bg-gray-800 rounded-xl xkd2 [&:has(table)_.ccvgs8x]:border-t [&:has(table)_.x32]:bg-tertiary [&:has(table)]:overflow-hidden border dark:border-gray-700 text-fg dark:text-gray-200 shadow-sm [&:has(.larhy3):not(:has(.yahnba))>.ccvgs8x]:pt-6 [&:has(.larhy3)]:overflow-hidden [&_table]:overflow-hidden"
     ],
     header: "flex xlw32 flex-col space-y-1.5 px-6 py-5",
-    title: "sm:leading-6 leading-none klda font-semibold tracking-tight",
-    description: "text-base dl2 text-muted-fg sm:text-sm",
+    title: "sm:leading-6 leading-none klda font-semibold tracking-tight dark:text-gray-100",
+    description: "text-base dl2 text-muted-fg dark:text-gray-400 sm:text-sm",
     content:
-      "yahnba px-6 pb-6 has-[.t-hea]:bg-secondary/40 has-[table]:p-0 [&:has(table)+.ccvgs8x]:py-5 [&:has(table)]:border-t [&_.t-cel]:px-6 [&_.t-col]:px-6",
+      "yahnba px-6 pb-6 has-[.t-hea]:bg-secondary/40 dark:has-[.t-hea]:bg-gray-700/40 has-[table]:p-0 [&:has(table)+.ccvgs8x]:py-5 [&:has(table)]:border-t dark:[&:has(table)]:border-gray-700 [&_.t-cel]:px-6 [&_.t-col]:px-6",
     footer: "ccvgs8x flex items-center p-6 pt-0"
   }
 })

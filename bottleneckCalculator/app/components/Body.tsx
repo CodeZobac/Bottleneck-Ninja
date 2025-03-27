@@ -17,7 +17,7 @@ const Body = () => {
 	// Set appropriate colors based on theme
 	const isDark = mounted && resolvedTheme === 'dark'
 	const bgColor = isDark ? "rgba(30, 30, 30, 1)" : "rgba(215, 215, 215, 1)"
-	const dotColor = isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.15)"
+	
 	
 	return (
 		<>
@@ -72,8 +72,12 @@ const Body = () => {
 				xmlns="http://www.w3.org/2000/svg"
 			>
 				<defs>
+						<linearGradient id="purpleBlueGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+						<stop offset="0%" stopColor="#9333ea" stopOpacity="0.4" />
+						<stop offset="100%" stopColor="#3b82f6" stopOpacity="0.4" />
+					</linearGradient>
 					<pattern id="dottedGrid" width="30" height="30" patternUnits="userSpaceOnUse">
-						<circle cx="2" cy="2" r="1" fill={dotColor} />
+						<circle cx="2" cy="2" r="1.5" fill={isDark ? "rgba(255,255,255,0.15)" : "url(#purpleBlueGradient)"} />
 					</pattern>
 				</defs>
 				<rect width="100%" height="100%" fill="url(#dottedGrid)" />
