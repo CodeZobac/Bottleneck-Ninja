@@ -6,7 +6,7 @@
 
 ## Overview
 
-Bottleneck Ninja is a powerful web application designed to identify and solve hardware bottlenecks in PC systems. The tool helps users optimize their computer builds by analyzing the compatibility and performance balance between CPU, GPU, RAM, and other components.
+Bottleneck Ninja is a powerful web application designed to identify and solve hardware bottlenecks in PC systems with AI. The tool helps users optimize their computer builds by analyzing the compatibility and performance balance between CPU, GPU, and RAM
 
 ## Key Features
 
@@ -58,7 +58,7 @@ yarn dev
 
 ## How It Works
 
-Bottleneck Ninja uses advanced algorithms to analyze the relationship between different hardware components in your PC build. It calculates potential bottlenecks where one component might be limiting the performance of others, then provides actionable recommendations to achieve optimal system balance.
+Bottleneck Ninja uses advanced algorithms powered by AI to analyze the relationship between different hardware components in your PC build. It calculates potential bottlenecks where one component might be limiting the performance of others, then provides actionable recommendations to achieve optimal system balance.
 
 ## Contributing
 
@@ -66,7 +66,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Contact
 
@@ -74,4 +74,4 @@ For questions or feedback, please open an issue in the GitHub repository.
 
 ---
 
-© 2025 Bottleneck Ninja | [bottleneckninja.com](https://b
+© 2025 Bottleneck Ninja | [bottleneckninja.com](https://bottleneck-ninja.vercel.app)
