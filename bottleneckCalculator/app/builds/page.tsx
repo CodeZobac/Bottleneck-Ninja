@@ -176,7 +176,7 @@ export default function BuildsPage() {
           }} />
         </Link>
         {/* Left Sidebar - Build List */}
-        <div className="w-full md:w-1/3 lg:w-1/4 md:mt-[132px]"> {/* Changed from md:mt-[72px] to md:mt-[120px] */}
+        <div className="w-full md:w-1/3 lg:w-1/4 md:mt-[132px]">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
             <div className="p-4 bg-blue-600 dark:bg-blue-800 text-white">
               <h2 className="text-xl font-bold">Your PC Builds</h2>

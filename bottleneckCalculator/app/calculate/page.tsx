@@ -16,6 +16,8 @@ import { SaveIcon, FileDown, User } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useAppSelector } from '../store'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
+import { HeaderLogo } from '../components/HeaderLogo'
 
 // Import Lottie client-side only
 const Lottie = dynamic(() => import('lottie-react'), { 
@@ -400,6 +402,15 @@ export default function CalculateResults() {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 dark:from-gray-900 dark:to-gray-950 p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header Section */}
+        <Link href={"/"}>
+          <HeaderLogo style={{ 
+            position: 'absolute', 
+            top: '1.5rem', 
+            left: 'calc(30vw - 35rem)', 
+            marginLeft: '-3rem',
+            paddingBottom: '1rem',
+          }} />
+        </Link>
         <motion.div 
           className="mb-10 text-center"
           initial={{ opacity: 0, y: -20 }}

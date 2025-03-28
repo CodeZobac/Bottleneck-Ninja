@@ -2,7 +2,6 @@
 
 import {
   IconCirclePerson,
-  IconCommandRegular,
   IconDeviceDesktop,
   IconLogout,
   IconMacbook,
@@ -170,10 +169,6 @@ export function HeaderMenu() {
             </Menu.Item>
           </Menu.Section>
           <Menu.Separator />
-          <Menu.Item>
-            <IconCommandRegular />
-            <span className="menu-label">Command Menu</span>
-          </Menu.Item>
           <Menu.Submenu>
             <Menu.Item>
               {resolvedTheme === "light" ? (
@@ -197,7 +192,6 @@ export function HeaderMenu() {
               </Menu.Item>
             </Menu.Content>
           </Menu.Submenu>
-          <Menu.Separator />
           <Menu.Item href="#contact-s">
             <span className="menu-label">Contact Support</span>
           </Menu.Item>
