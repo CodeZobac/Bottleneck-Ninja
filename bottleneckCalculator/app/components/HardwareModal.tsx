@@ -138,23 +138,12 @@ export function HardwareModal() {
       // Store the response data in Redux
       dispatch(setBottleneckData(bottleneckData));
       
-      // // Also keep using localStorage for backward compatibility
-      // localStorage.setItem('bottleneckData', JSON.stringify(bottleneckData));
-
-      // Get the time when the animation started
-      const loadingStartTime = Date.now();
-      const minimumLoadingTime = 2000; // 2 seconds minimum
-      
-      // Calculate how much time has passed since loading started
-      const elapsedTime = Date.now() - loadingStartTime;
-      const remainingTime = Math.max(0, minimumLoadingTime - elapsedTime);
-      
       // If we haven't shown the animation for at least 2 seconds, wait the remaining time
       setTimeout(() => {
         setIsLoading(false);
         setIsOpen(false);
         router.push('/calculate');
-      }, remainingTime);
+      });
     },
     onError: (error) => {
       console.error('Calculation error:', error);
