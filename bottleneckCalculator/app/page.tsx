@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import ClientHome from './client-home';
+import { ToastProvider } from './components/ui/toast';
 
 export const metadata: Metadata = {
   title: "Bottleneck Ninja - Find and Fix PC Hardware Bottlenecks",
@@ -20,7 +21,11 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <ClientHome />;
+  return (
+    <ToastProvider>
+      <ClientHome />
+    </ToastProvider>
+  );
 }
 
 

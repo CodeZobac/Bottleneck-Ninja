@@ -127,3 +127,79 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// Delete user account and all associated data
+export async function DELETE() {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    // Check if user is authenticated
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "You must be logged in to delete your account" },
+        { status: 401 }
+      );
+    }
+    
+    const userId = session.user.id;
+    
+    // Start a transaction to delete all user data
+    // Note: This relies on foreign key constraints with CASCADE DELETE
+    // to properly remove associated records
+    
+    // Delete user's profile
+    const { error: profileError } = await supabase
+      .from("profile")
+      .delete()
+      .eq("user_id", userId);
+      
+    if (profileError) {
+      console.error("Error deleting user profile:", profileError);
+      return NextResponse.json(
+        { error: "Failed to delete profile data" },
+        { status: 500 }
+      );
+    }
+    
+    // Delete user's builds
+    const { error: buildsError } = await supabase
+      .from("builds")
+      .delete()
+      .eq("user_id", userId);
+      
+    if (buildsError) {
+      console.error("Error deleting user builds:", buildsError);
+      return NextResponse.json(
+        { error: "Failed to delete build data" },
+        { status: 500 }
+      );
+    }
+    
+    // Finally delete the user record
+    const { error: userError } = await supabase
+      .from("users")
+      .delete()
+      .eq("id", userId);
+      
+    if (userError) {
+      console.error("Error deleting user:", userError);
+      return NextResponse.json(
+        { error: "Failed to delete user account" },
+        { status: 500 }
+      );
+    }
+    
+    return NextResponse.json({ 
+      success: true, 
+      message: "Account deleted successfully" 
+    }, { status: 200 });
+    
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error("Error in DELETE /api/profile:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to delete user account" },
+      { status: 500 }
+    );
+  }
+}

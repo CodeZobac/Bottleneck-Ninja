@@ -1,7 +1,7 @@
 "use client"
-
 import { useState, useEffect, useRef } from "react"
-import apiCall, { GpuCategory } from "../api/apiCall"
+import { getGpuCategories } from "../api/serverActions"
+import { GpuCategory } from "../api/types"
 import { useTheme } from "next-themes"
 
 interface GpuMenuProps {
@@ -40,7 +40,7 @@ export function GpuMenu({ selectedGpu, setSelectedGpu }: GpuMenuProps) {
   const fetchGpuData = async () => {
     try {
       setIsLoading(true)
-      const categories = await apiCall.getGpuCategories()
+      const categories = await getGpuCategories()
       console.log("Received GPU categories:", categories)
       setGpuCategories(categories)
     } catch (err) {

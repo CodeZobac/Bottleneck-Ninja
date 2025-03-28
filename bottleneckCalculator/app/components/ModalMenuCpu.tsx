@@ -1,7 +1,7 @@
 "use client"
-
 import { useState, useEffect, useRef } from "react"
-import apiCall, { CpuCategory } from "../api/apiCall"
+import { getCpuCategories } from "../api/serverActions"
+import { CpuCategory } from "../api/types"
 import { useTheme } from "next-themes"
 
 interface CpuMenuProps {
@@ -41,7 +41,7 @@ export function CpuMenu({ selectedCpu, setSelectedCpu }: CpuMenuProps) {
     try {
       setIsLoading(true)
       console.log("Fetching CPU data...")
-      const categories = await apiCall.getCpuCategories()
+      const categories = await getCpuCategories()
       console.log("Received CPU categories:", categories)
       
       if (!categories || categories.length === 0) {

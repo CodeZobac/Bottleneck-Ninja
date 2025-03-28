@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import FirstTimeSetup from "./FirstTimeSetup";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { PencilIcon, CheckIcon, XIcon, HomeIcon, Sparkles, ChevronRight } from "lucide-react";
+import { PencilIcon, CheckIcon, XIcon, HomeIcon, Sparkles, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -31,6 +31,7 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   // Theme-aware styling
   const isDarkTheme = resolvedTheme === 'dark';
@@ -126,6 +127,37 @@ export default function ProfilePage() {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value);
+  };
+
+  // Handle redirecting to PayPal payment
+  const handleGenerateReport = async () => {
+    setPaymentLoading(true);
+    try {
+      const response = await fetch('/api/payments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Payment initiation failed');
+      }
+
+      const data = await response.json();
+      
+      if (data.redirectUrl) {
+        // Redirect to PayPal payment page
+        window.location.href = data.redirectUrl;
+      } else {
+        throw new Error('No redirect URL provided');
+      }
+    } catch (error) {
+      console.error("Error creating payment:", error);
+      setError("Failed to initiate payment. Please try again later.");
+    } finally {
+      setPaymentLoading(false);
+    }
   };
 
   return (
@@ -727,27 +759,30 @@ export default function ProfilePage() {
                           transition={{ delay: 0.5 }}
                           className="mt-8"
                         >
-                          <Link href="/calculate">
-                            <motion.div 
-                              whileHover={{ scale: 1.02, x: 5 }}
-                              whileTap={{ scale: 0.98 }}
-                              className={`flex items-center justify-between p-4 rounded-lg ${
-                                isDarkTheme 
-                                  ? 'bg-gradient-to-r from-blue-900/40 to-purple-900/40 hover:from-blue-800/40 hover:to-purple-800/40' 
-                                  : 'bg-gradient-to-r from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200'
-                              } transition-all`}
-                            >
-                              <div>
-                                <h3 className={`font-medium ${isDarkTheme ? 'text-blue-200' : 'text-blue-800'}`}>
-                                  View Recommendations
-                                </h3>
-                                <p className={`text-sm ${isDarkTheme ? 'text-gray-400' : 'text-gray-600'}`}>
-                                  See hardware options based on your preferences
-                                </p>
-                              </div>
+                          <motion.div 
+                            whileHover={{ scale: 1.02, x: 5 }}
+                            whileTap={{ scale: 0.98 }}
+                            className={`flex items-center justify-between p-4 rounded-lg cursor-pointer ${
+                              isDarkTheme 
+                                ? 'bg-gradient-to-r from-blue-900/40 to-purple-900/40 hover:from-blue-800/40 hover:to-purple-800/40' 
+                                : 'bg-gradient-to-r from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200'
+                            } transition-all ${paymentLoading ? 'opacity-70 pointer-events-none' : ''}`}
+                            onClick={handleGenerateReport}
+                          >
+                            <div>
+                              <h3 className={`font-medium ${isDarkTheme ? 'text-blue-200' : 'text-blue-800'}`}>
+                                Generate AI Report
+                              </h3>
+                              <p className={`text-sm ${isDarkTheme ? 'text-gray-400' : 'text-gray-600'}`}>
+                                Create personalized hardware recommendations based on your preferences
+                              </p>
+                            </div>
+                            {paymentLoading ? (
+                              <Loader2 className={`${isDarkTheme ? 'text-blue-300' : 'text-blue-600'} animate-spin`} />
+                            ) : (
                               <ChevronRight className={isDarkTheme ? 'text-blue-300' : 'text-blue-600'} />
-                            </motion.div>
-                          </Link>
+                            )}
+                          </motion.div>
                         </motion.div>
                       )}
                     </div>

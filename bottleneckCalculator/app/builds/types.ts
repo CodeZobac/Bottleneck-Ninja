@@ -1,4 +1,4 @@
-// filepath: /root/dev/scuzzy/Bottleneck-Ninja/bottleneckCalculator/app/builds/types.ts
+
 export interface HardwareBuild {
   id?: string;
   user_id?: string;

@@ -14,6 +14,7 @@ import {
 import { HardwareBuild } from '../builds/types'
 import { SaveIcon, FileDown, User } from 'lucide-react'
 import { useTheme } from 'next-themes'
+import { useAppSelector } from '../store'
 
 interface BottleneckData {
   result: {
@@ -51,9 +52,31 @@ export default function CalculateResults() {
   const router = useRouter()
   const { theme } = useTheme();
   const isDark = theme === 'dark';
+  
+  // Get bottleneck data from Redux store
+  const reduxBottleneckData = useAppSelector(state => state.bottleneck.data);
 
   useEffect(() => {
-    // Get data from localStorage
+    // First try to get data from Redux
+    if (reduxBottleneckData) {
+      setData(reduxBottleneckData);
+      
+      // Create chart data from Redux data
+      if (reduxBottleneckData.result?.hardware_analysis?.estimated_impact) {
+        const impact = reduxBottleneckData.result.hardware_analysis.estimated_impact;
+        const formattedChartData = [
+          { component: 'CPU', score: impact.CPU || 0 },
+          { component: 'GPU', score: impact.GPU || 0 },
+          { component: 'RAM', score: impact.RAM || 0 },
+        ];
+        setChartData(formattedChartData);
+      }
+      
+      setLoading(false);
+      return;
+    }
+    
+    // Fallback to localStorage if no Redux data is available
     const storedData = localStorage.getItem('bottleneckData')
     
     if (storedData) {
@@ -89,7 +112,7 @@ export default function CalculateResults() {
     }
     
     setLoading(false)
-  }, [])
+  }, [reduxBottleneckData])
   
   // If no data is found, redirect to home
   useEffect(() => {

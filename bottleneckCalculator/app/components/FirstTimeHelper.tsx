@@ -213,7 +213,7 @@ export default function FirstTimeHelper() {
         // Position modal 2 with arrow tip at X: 1618, Y: 206
         return {
           top: '185px', // Position below the coordinate Y: 206
-          right: '300px', // Position to the left of coordinate X: 1618
+          right: '320px', // Position to the left of coordinate X: 1618
         };
       
       case 3:

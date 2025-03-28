@@ -1,7 +1,7 @@
 "use client"
-
 import { useState, useEffect, useRef } from "react"
-import apiCall, { RamCategory } from "../api/apiCall"
+import { getRamCategories } from "../api/serverActions"
+import { RamCategory } from "../api/types"
 import { useTheme } from "next-themes"
 
 interface RamMenuProps {
@@ -41,7 +41,7 @@ export function RamMenu({ selectedRam, setSelectedRam }: RamMenuProps) {
     try {
       setIsLoading(true)
       console.log("Fetching RAM data...")
-      const categories = await apiCall.getRamCategories()
+      const categories = await getRamCategories()
       console.log("Received RAM categories:", categories)
       
       if (!categories || categories.length === 0) {

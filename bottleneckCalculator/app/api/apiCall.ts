@@ -1,87 +1,18 @@
-'use client';
+import { 
+    PredictionRequest, 
+    GpuCategory, 
+    GpuModel, 
+    CpuCategory, 
+    CpuModel, 
+    RamCategory, 
+    RamModel,
+    ApiCall
+} from './types';
 
-// Define the expected API response structures
-interface PredictionRequest {
-    test_text: string;
-}
-
-interface PredictionResponse {
-    prediction: string;
-	recomendation: string[];
-    result: {
-		agreement: boolean;
-		components: {
-		  CPU: string;
-		  GPU: string;
-		  RAM: string;
-		};
-		hardware_analysis: {
-		  bottleneck: string;
-		  percentile_ranks: unknown | string;
-		  raw_benchmark_scores: unknown | string;
-		  estimated_impact: {
-			CPU: number;
-			GPU: number;
-			RAM: number;
-		  };
-		};
-	  };
-}
-
-interface GpuModel {
-    id: number;
-    name: string;
-}
-
-interface GpuCategory {
-    id: number;
-    name: string;
-    models: GpuModel[];
-}
-
-interface CpuModel {
-    id: number;
-    name: string;
-}
-
-interface CpuCategory {
-    id: number;
-    name: string;
-    models: CpuModel[];
-}
-
-interface RamModel {
-    id: number;
-    name: string;
-}
-
-interface RamCategory {
-    id: number;
-    name: string;
-    models: RamModel[];
-}
-
-interface ComponentsResponse {
-    cpu: string[];
-    gpu?: string[];
-    gpus?: GpuCategory[];
-    cpus?: CpuCategory[];
-    rams?: RamCategory[] | string[];
-}
-
-interface ApiCall {
-    get: (text: string) => Promise<PredictionRequest>;
-    post: (text: string) => Promise<PredictionResponse>;
-    getComponents: () => Promise<ComponentsResponse>;
-    getGpuCategories: () => Promise<GpuCategory[]>;
-    getCpuCategories: () => Promise<CpuCategory[]>;
-    getRamCategories: () => Promise<RamCategory[]>;
-}
-
-const url = process.env.NEXT_PUBLIC_API_URL;
-const endpoint1 = process.env.NEXT_PUBLIC_API_ENDPOINT1;
-const endpoint2 = process.env.NEXT_PUBLIC_API_ENDPOINT2;
-// const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+const url = process.env.API_URL;
+const endpoint1 = process.env.API_ENDPOINT1;
+const endpoint2 = process.env.API_ENDPOINT2;
+// const apiKey = process.env.API_KEY;
 
 const apiCall: ApiCall = {
     get: async (text: string) => {
@@ -125,7 +56,8 @@ const apiCall: ApiCall = {
                 headers: {
                     'Accept': 'application/json',
                 },
-                mode: 'cors'
+                mode: 'cors',
+                cache: 'no-store' // Add this to ensure fresh data
             });
             
             if (!response.ok) {

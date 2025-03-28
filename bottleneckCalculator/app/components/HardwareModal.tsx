@@ -6,9 +6,13 @@ import { CpuMenu } from "./ModalMenuCpu"
 import { useState, useEffect } from "react"
 import { RamMenu } from "./ModalMenuRam"
 import dynamic from 'next/dynamic'
-import apiCall from "../api/apiCall"
+import { sendPostRequest } from "../api/serverActions"
 import { useRouter } from 'next/navigation'
 import MainButton from "./ui/buton"
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { PredictionResponse } from "../api/types"
+import { useAppDispatch } from "../store"
+import { setBottleneckData } from "../features/bottleneckSlice"
 
 // Import Lottie client-side only
 const Lottie = dynamic(() => import('lottie-react'), { 
@@ -20,6 +24,32 @@ const Lottie = dynamic(() => import('lottie-react'), {
   )
 })
 
+interface BottleneckData {
+  cpu: string;
+  gpu: string;
+  ram: string;
+  recommendations: string[];
+  result: {
+    agreement: boolean;
+    components: {
+      CPU: string;
+      GPU: string;
+      RAM: string;
+    };
+    hardware_analysis: {
+      bottleneck: string;
+      percentile_ranks: Record<string, number>;
+      raw_benchmark_scores: Record<string, number>;
+      estimated_impact: {
+        CPU: number;
+        GPU: number;
+        RAM: number;
+      };
+    };
+  };
+  timestamp: string;
+}
+
 export function HardwareModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCpu, setSelectedCpu] = useState<string>("");
@@ -29,6 +59,8 @@ export function HardwareModal() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [loadingAnimation, setLoadingAnimation] = useState<any>(null);
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
   
   // Load the animation data client-side only
   useEffect(() => {
@@ -51,6 +83,85 @@ export function HardwareModal() {
       isMounted = false;
     };
   }, [isLoading]);
+
+  // Enhanced prefetching - both data and page prefetch
+  useEffect(() => {
+    // Only prefetch when all three components are selected
+    if (selectedCpu && selectedGpu && selectedRam) {
+      // 1. Data prefetching with React Query
+      const queryKey = ['bottleneckCalculation', selectedCpu, selectedGpu, selectedRam];
+      const queryFn = () => sendPostRequest(`${selectedCpu} with ${selectedGpu} with ${selectedRam}`);
+      
+      queryClient.prefetchQuery({
+        queryKey,
+        queryFn,
+        staleTime: 1000 * 60 * 5, // 5 minutes
+      });
+      
+      console.log('Prefetching calculation for:', selectedCpu, selectedGpu, selectedRam);
+      
+      // 2. Page prefetching with Next.js
+      router.prefetch('/calculate');
+      console.log('Prefetching /calculate page');
+    }
+  }, [selectedCpu, selectedGpu, selectedRam, queryClient, router]);
+  
+  // Setup mutation for submission
+  const mutation = useMutation({
+    mutationFn: (params: string) => sendPostRequest(params),
+    onSuccess: (response: PredictionResponse) => {
+      console.log('Calculation completed:', response);
+      
+      // Create the bottleneck data object
+      const bottleneckData: BottleneckData = {
+        cpu: selectedCpu,
+        gpu: selectedGpu,
+        ram: selectedRam,
+        recommendations: response.recomendation || [],
+        result: {
+          agreement: response.result.agreement || false,
+          components: response.result.components || {
+            CPU: 'average',
+            GPU: 'average',
+            RAM: 'average'
+          },
+          hardware_analysis: {
+            bottleneck: response.result.hardware_analysis?.bottleneck || "",
+            percentile_ranks: (response.result.hardware_analysis?.percentile_ranks as Record<string, number>) || {} as Record<string, number>,
+            raw_benchmark_scores: (response.result.hardware_analysis?.raw_benchmark_scores as Record<string, number>) || {} as Record<string, number>,
+            estimated_impact: response.result.hardware_analysis?.estimated_impact || { CPU: 0, GPU: 0, RAM: 0 }
+          }
+        },
+        timestamp: new Date().toISOString()
+      };
+      
+      // Store the response data in Redux
+      dispatch(setBottleneckData(bottleneckData));
+      
+      // // Also keep using localStorage for backward compatibility
+      // localStorage.setItem('bottleneckData', JSON.stringify(bottleneckData));
+
+      // Get the time when the animation started
+      const loadingStartTime = Date.now();
+      const minimumLoadingTime = 2000; // 2 seconds minimum
+      
+      // Calculate how much time has passed since loading started
+      const elapsedTime = Date.now() - loadingStartTime;
+      const remainingTime = Math.max(0, minimumLoadingTime - elapsedTime);
+      
+      // If we haven't shown the animation for at least 2 seconds, wait the remaining time
+      setTimeout(() => {
+        setIsLoading(false);
+        setIsOpen(false);
+        router.push('/calculate');
+      }, remainingTime);
+    },
+    onError: (error) => {
+      console.error('Calculation error:', error);
+      // Display error for a brief moment then return to form
+      setIsLoading(false);
+    }
+  });
   
   const handleModalOpen = () => {
     setIsOpen(true);
@@ -92,58 +203,11 @@ export function HardwareModal() {
           // Prevent default form submission behavior
           e.preventDefault();
           
-          // Store selections before clearing
-          const cpuSelection = selectedCpu;
-          const gpuSelection = selectedGpu;
-          const ramSelection = selectedRam;
-          
-          // Clear selections and show loading state
-          clearSelections();
+          // Show loading state
           setIsLoading(true);
           
-          // Call the API with the selected components
-          apiCall.post(`${cpuSelection} with ${gpuSelection} with ${ramSelection}`)
-            .then((response) => {
-              console.log(response);
-              
-              // Store the response data in localStorage for the results page
-              localStorage.setItem('bottleneckData', JSON.stringify({
-                cpu: cpuSelection,
-                gpu: gpuSelection,
-                ram: ramSelection,
-                recommendations: response.recomendation || [],
-                result: {
-                  agreement: response.result.agreement || false,
-                  components: response.result.components || {
-                    CPU: 'average',
-                    GPU: 'average',
-                    RAM: 'average'
-                  },
-                  hardware_analysis: response.result.hardware_analysis || {
-                    bottleneck: "",
-                    percentile_ranks: {},
-                    raw_benchmark_scores: {},
-                    estimated_impact: { CPU: 0, GPU: 0, RAM: 0 }
-                  }
-                },
-                timestamp: new Date().toISOString()
-              }));
-
-              // Wait a moment before redirecting (for loading animation to be seen)
-              setTimeout(() => {
-                setIsLoading(false);
-                setIsOpen(false);
-                // Redirect to results page
-                router.push('/calculate');
-              }, 2000);
-            })
-            .catch((error) => {
-              console.error(error);
-              // Display error for 2 seconds then return to form
-              setTimeout(() => {
-                setIsLoading(false);
-              }, 2000);
-            });
+          // Use our prefetched data via mutation
+          mutation.mutate(`${selectedCpu} with ${selectedGpu} with ${selectedRam}`);
         }}>
           <Modal.Body className="pb-1 !overflow-visible">
             {isLoading ? (
@@ -254,7 +318,7 @@ export function HardwareModal() {
                 isDisabled={!selectedCpu || !selectedGpu || !selectedRam}
                 className={!selectedCpu || !selectedGpu || !selectedRam ? "opacity-50 cursor-not-allowed" : ""}
               >
-                Calculate
+                {selectedCpu && selectedGpu && selectedRam ? "Calculate" : "Calculate"}
               </Button>
             )}
           </Modal.Footer>

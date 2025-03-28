@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "./providers/auth-provider";
-import { ThemeProvider } from "next-themes";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/react"
+import { Providers } from "./providers/providers";
 
 
 // Define the Geist fonts
@@ -103,15 +104,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider
-        attribute={"class"}
-        defaultTheme={"system"}
-        enableSystem={true}
-        disableTransitionOnChange={true}>
+        <Providers>
           <AuthProvider>
-            {children}
+          
+              {children}
+            
           </AuthProvider>
-        </ThemeProvider>
+        </Providers>
+        <Analytics />
       </body>
     </html>
   );

@@ -29,14 +29,16 @@
       "ui": [
         "./components/ui/index.ts"
       ]
-    }
+    },
+    "types": ["node", "jest", "@testing-library/jest-dom"]
   },
   "include": [
     "next-env.d.ts",
+    "types/jest-dom.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-, "app/profile"  ],
+  ],
   "exclude": [
     "node_modules"
   ]

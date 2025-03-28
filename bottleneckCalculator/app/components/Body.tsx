@@ -4,6 +4,7 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react"
 import { HardwareModal } from "./HardwareModal"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
+import { CookieManager } from "./CookieManager"
 
 const Body = () => {
 	const { resolvedTheme } = useTheme()
@@ -20,7 +21,7 @@ const Body = () => {
 	
 	
 	return (
-		<>
+		<CookieManager>
 			<h1 style={{
 				fontFamily: '"Montserrat", sans-serif',
 				fontSize: '2.5rem',
@@ -82,7 +83,7 @@ const Body = () => {
 				</defs>
 				<rect width="100%" height="100%" fill="url(#dottedGrid)" />
 			</svg>
-		</>
+		 </CookieManager>
 	)
 }
 

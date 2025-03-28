@@ -4,14 +4,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, Save, X } from "lucide-react";
+import { AlertCircle, AlertTriangle, Save, Trash2, X } from "lucide-react";
 import { useTheme } from "next-themes";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  onSave: () => void;
+  onSave?: () => void;
+  title?: string;
+  message?: string;
+  confirmButtonText?: string;
+  cancelButtonText?: string;
+  confirmButtonIntent?: "primary" | "secondary" | "danger";
+  icon?: "warning" | "error" | "info" | "success";
 }
 
 export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -19,6 +25,12 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   onClose,
   onConfirm,
   onSave,
+  title = "Unsaved Changes",
+  message = "Your analysis results will not be saved if you leave this page. Would you like to save your build before continuing?",
+  confirmButtonText = "Continue Without Saving",
+  cancelButtonText = "Cancel",
+  confirmButtonIntent = "primary",
+  icon = "warning",
 }) => {
   const { data: session } = useSession();
   const router = useRouter();
@@ -35,10 +47,56 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   
   // If not logged in, clicking save should redirect to sign in
   const handleSaveClick = () => {
-    if (!session) {
+    if (!session && onSave) {
       router.push("/auth/signin");
-    } else {
+    } else if (onSave) {
       onSave();
+    }
+  };
+
+  // Determine icon component based on type
+  const getIconComponent = () => {
+    switch (icon) {
+      case "warning":
+        return <AlertTriangle size={28} className="text-amber-500" />;
+      case "error":
+        return <Trash2 size={28} className="text-red-500" />;
+      case "info":
+        return <AlertCircle size={28} className="text-blue-500" />;
+      case "success":
+        return <Save size={28} className="text-green-500" />;
+      default:
+        return <AlertTriangle size={28} className="text-amber-500" />;
+    }
+  };
+
+  // Determine background color for icon container
+  const getIconBackgroundColor = () => {
+    switch (icon) {
+      case "warning":
+        return "bg-amber-100";
+      case "error":
+        return "bg-red-100";
+      case "info":
+        return "bg-blue-100";
+      case "success":
+        return "bg-green-100";
+      default:
+        return "bg-amber-100";
+    }
+  };
+
+  // Determine button intent styles
+  const getButtonStyles = () => {
+    switch (confirmButtonIntent) {
+      case "danger":
+        return "bg-red-500 hover:bg-red-600";
+      case "primary":
+        return "bg-blue-500 hover:bg-blue-600";
+      case "secondary":
+        return "bg-emerald-500 hover:bg-emerald-600";
+      default:
+        return "bg-emerald-500 hover:bg-emerald-600";
     }
   };
   
@@ -70,32 +128,56 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             >
               <div className="p-6">
                 <div className="flex items-center justify-center mb-6">
-                  <div className="rounded-full bg-amber-100 p-4">
-                    <AlertTriangle size={28} className="text-amber-500" />
+                  <div className={`rounded-full ${getIconBackgroundColor()} p-4`}>
+                    {getIconComponent()}
                   </div>
                 </div>
-                <h3 className={`mb-2 text-center text-xl font-bold ${isDarkTheme ? 'text-gray-100' : 'text-gray-800'}`}>Unsaved Changes</h3>
+                <h3 className={`mb-2 text-center text-xl font-bold ${isDarkTheme ? 'text-gray-100' : 'text-gray-800'}`}>{title}</h3>
                 <p className={`mb-8 text-center ${isDarkTheme ? 'text-gray-300' : 'text-gray-600'}`}>
-                  Your analysis results will not be saved if you leave this page. Would you like to save your build before continuing?
+                  {message}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center sm:justify-between">
-                  <Button
-                    intent="secondary"
-                    appearance="outline"
-                    className="px-4 py-2 flex-1"
-                    onPress={onConfirm}
-                  >
-                    Continue Without Saving
-                  </Button>
-                  <Button
-                    intent="primary"
-                    appearance="solid"
-                    className="bg-emerald-500 hover:bg-emerald-600 px-4 py-2 flex-1 flex items-center justify-center gap-2"
-                    onPress={handleSaveClick}
-                  >
-                    <Save size={18} />
-                    Save to Profile
-                  </Button>
+                  {onSave ? (
+                    <>
+                      <Button
+                        intent="secondary"
+                        appearance="outline"
+                        className="px-4 py-2 flex-1"
+                        onPress={onConfirm}
+                      >
+                        {confirmButtonText}
+                      </Button>
+                      <Button
+                        intent="primary"
+                        appearance="solid"
+                        className="bg-emerald-500 hover:bg-emerald-600 px-4 py-2 flex-1 flex items-center justify-center gap-2"
+                        onPress={handleSaveClick}
+                      >
+                        <Save size={18} />
+                        Save to Profile
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        intent="secondary"
+                        appearance="outline"
+                        className="px-4 py-2 flex-1"
+                        onPress={onClose}
+                      >
+                        {cancelButtonText}
+                      </Button>
+                      <Button
+                        intent={confirmButtonIntent}
+                        appearance="solid"
+                        className={`${getButtonStyles()} px-4 py-2 flex-1 flex items-center justify-center gap-2`}
+                        onPress={onConfirm}
+                      >
+                        {confirmButtonIntent === "danger" && <Trash2 size={18} />}
+                        {confirmButtonText}
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
               
