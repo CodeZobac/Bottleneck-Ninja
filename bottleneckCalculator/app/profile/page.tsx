@@ -292,7 +292,32 @@ export default function ProfilePage() {
           </motion.p>
         </div>
       ) : status === "authenticated" && !userPreferences ? (
-        <FirstTimeSetup session={session} onComplete={() => setLoading(true)} />
+        <FirstTimeSetup session={session} onComplete={() => {
+          setLoading(true);
+          // Immediately fetch the updated preferences without waiting for the effect
+          const fetchUserPreferences = async () => {
+            try {
+              const response = await fetch('/api/profile');
+              if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to fetch preferences');
+              }
+              
+              const data = await response.json();
+              
+              if (data.preferences) {
+                setUserPreferences(data.preferences);
+                setEditedPrefs(data.preferences);
+              }
+            } catch (error) {
+              console.error("Error fetching user preferences:", error);
+            } finally {
+              setLoading(false);
+            }
+          };
+          
+          fetchUserPreferences();
+        }} />
       ) : (
         <div className="min-h-screen flex items-center justify-center p-6">
           <motion.div

@@ -15,6 +15,17 @@ import { HardwareBuild } from '../builds/types'
 import { SaveIcon, FileDown, User } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useAppSelector } from '../store'
+import dynamic from 'next/dynamic'
+
+// Import Lottie client-side only
+const Lottie = dynamic(() => import('lottie-react'), { 
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+  )
+})
 
 interface BottleneckData {
   result: {
@@ -45,6 +56,8 @@ interface BottleneckData {
 export default function CalculateResults() {
   const [data, setData] = useState<BottleneckData | null>(null)
   const [loading, setLoading] = useState(true)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [loadingAnimation, setLoadingAnimation] = useState<any>(null) 
   const [chartData, setChartData] = useState<Array<{component: string, score: number}>>([])
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -55,6 +68,28 @@ export default function CalculateResults() {
   
   // Get bottleneck data from Redux store
   const reduxBottleneckData = useAppSelector(state => state.bottleneck.data);
+
+  // Load animation if needed
+  useEffect(() => {
+    let isMounted = true;
+    
+    // Only load animation when needed and on client
+    if (loading && typeof window !== 'undefined') {
+      import('../../public/isLoading.json')
+        .then(animData => {
+          if (isMounted && animData?.default) {
+            setLoadingAnimation(animData.default);
+          }
+        })
+        .catch(err => {
+          console.error("Failed to load animation:", err);
+        });
+    }
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [loading]);
 
   useEffect(() => {
     // First try to get data from Redux
@@ -72,7 +107,10 @@ export default function CalculateResults() {
         setChartData(formattedChartData);
       }
       
-      setLoading(false);
+      // Add a short delay to ensure smooth transitions
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
       return;
     }
     
@@ -111,7 +149,10 @@ export default function CalculateResults() {
       }
     }
     
-    setLoading(false)
+    // Set loading to false after a short delay
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
   }, [reduxBottleneckData])
   
   // If no data is found, redirect to home
@@ -290,9 +331,24 @@ export default function CalculateResults() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gray-50 dark:bg-gray-900">
-        <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-4 text-xl text-gray-700 dark:text-gray-200">Rendering your results...</p>
+      <div className="flex flex-col items-center justify-center min-h-screen py-10">
+        {/* Render animation only when data is loaded and on client */}
+        <div className="w-48 h-48">
+          {loadingAnimation && typeof window !== 'undefined' ? (
+            <Lottie 
+              animationData={loadingAnimation}
+              loop={true}
+              autoplay={true}
+              style={{ width: '100%', height: '100%' }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          )}
+        </div>
+        <p className="text-lg text-blue-700 dark:text-blue-400 font-medium mt-4">Preparing Your Analysis...</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Just a moment longer</p>
       </div>
     )
   }

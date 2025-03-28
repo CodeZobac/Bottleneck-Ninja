@@ -138,12 +138,20 @@ export function HardwareModal() {
       // Store the response data in Redux
       dispatch(setBottleneckData(bottleneckData));
       
-      // If we haven't shown the animation for at least 2 seconds, wait the remaining time
+      // Prefetch first to speed up the actual navigation
+      router.prefetch('/calculate');
+      
+      // Navigate to calculate page
+      // Note: TypeScript doesn't recognize router.push returns a Promise 
+      // but it does at runtime in the browser
+      router.push('/calculate');
+      
+      // Use a timeout to close the modal safely after navigation
+      // This gives the page time to load properly
       setTimeout(() => {
         setIsLoading(false);
         setIsOpen(false);
-        router.push('/calculate');
-      });
+      }, 1000);
     },
     onError: (error) => {
       console.error('Calculation error:', error);
