@@ -4,6 +4,8 @@
 
 > Project developed by human-ai partnership Afonso Caboz & Claude 3.7
 
+> **IMPORTANT**: When accessing the Vercel deployment, initial requests may take 5 minutes or longer due to the API being hosted on a free tier plan. Thank you for your patience.
+
 ## Overview
 
 Bottleneck Ninja is a powerful web application designed to identify and solve hardware bottlenecks in PC systems with AI. The tool helps users optimize their computer builds by analyzing the compatibility and performance balance between CPU, GPU, and RAM
@@ -53,6 +55,7 @@ npm run dev
 # or
 yarn dev
 ```
+> Note: Running the development server automatically triggers unit tests
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
