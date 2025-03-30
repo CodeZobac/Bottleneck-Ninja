@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { HeaderMenu } from './HeaderMenu';
 import { HeaderLogo } from './HeaderLogo';
+import HamburgerMenu from './HamburgerMenu';
 
 const Header = () => {
   useEffect(() => {
@@ -23,7 +24,14 @@ const Header = () => {
       <HeaderLogo />
       {/* Navigation */}
       <nav>
-        <HeaderMenu />
+        {/* Desktop Menu */}
+        <div className="hidden sm:block">
+          <HeaderMenu />
+        </div>
+        {/* Mobile Menu */}
+        <div className="block sm:hidden">
+          <HamburgerMenu />
+        </div>
       </nav>
     </header>
   );

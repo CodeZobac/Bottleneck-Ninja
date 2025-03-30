@@ -17,7 +17,7 @@ const getColorPalette = (isDark: boolean) => ({
   grid: isDark ? '#334155' : '#e2e8f0', // dark: slate-700, light: slate-200
   stroke: isDark ? '#64748b' : '#94a3b8', // dark: slate-500, light: slate-400
   tooltipBg: isDark ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-  background: isDark ? '#1e293b' : '#ffffff', // Dark background for dark mode
+  background: isDark ? '#1e293b' : '#f8fafc', // Updated: Dark background for dark mode, light blue-gray for light mode
   
   // Impact level colors
   critical: {
@@ -204,13 +204,11 @@ export function HardwareChart({ data }: HardwareChartProps) {
           className="mx-auto aspect-square w-full max-h-[300px] relative" 
           style={{ backgroundColor: colorPalette.background }}
         >
-          {/* Custom chart background for dark mode */}
-          {isDark && (
-            <div 
-              className="absolute inset-0 rounded-lg" 
-              style={{ backgroundColor: colorPalette.background }}
-            ></div>
-          )}
+          {/* Make sure background is applied in both light and dark mode */}
+          <div 
+            className="absolute inset-0 rounded-lg" 
+            style={{ backgroundColor: colorPalette.background }}
+          ></div>
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart 
               key={chartKey} 

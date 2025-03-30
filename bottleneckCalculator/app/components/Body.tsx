@@ -48,7 +48,7 @@ const Body = () => {
 							src="https://lottie.host/d015ec6f-e687-4f2b-8ded-acc4877e22bd/SVHV1nqw2L.lottie"
 							loop={true}
 							autoplay={true}
-							className="mb-160 w-3/5 mx-auto relative aspect-video" />
+							className="mb-160 w-full sm:w-4/5 md:w-3/5 mx-auto relative aspect-video" />
 					
 				
 				{/* Calculate Button positioned directly below the image */}

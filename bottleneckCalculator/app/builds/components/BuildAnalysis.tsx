@@ -4,6 +4,7 @@ import { HardwareBuild } from "../types";
 import { HardwareChart } from "@/app/components/HardwareChart";
 import { Button } from "@/app/components/ui/button";
 import { useTheme } from "next-themes";
+import Link from "next/link";
 
 interface BuildAnalysisProps {
   build: HardwareBuild;
@@ -342,6 +343,17 @@ export function BuildAnalysis({ build }: BuildAnalysisProps) {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.8 }}
       >
+        <Link href="/">
+          <Button
+            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 min-w-[150px] flex items-center justify-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            Back to Home
+          </Button>
+        </Link>
         <Button
           onPress={() => window.print()}
           className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700 min-w-[150px] flex items-center justify-center gap-2"

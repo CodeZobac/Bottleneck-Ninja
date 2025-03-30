@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --bg: 0 0% 84%; /* light mode background equivalent to rgba(215, 215, 215, 1) */
+  --bg: 0 0% 84%; 
   --fg: 222 47% 11%; /* dark text */
   --primary: 221 83% 53%; /* blue */
   --border: 220 13% 91%;

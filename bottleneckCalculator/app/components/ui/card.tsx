@@ -8,7 +8,7 @@ import { Heading } from "./heading"
 const card = tv({
   slots: {
     root: [
-      "xrkr bg-bg dark:bg-gray-800 rounded-xl xkd2 [&:has(table)_.ccvgs8x]:border-t [&:has(table)_.x32]:bg-tertiary [&:has(table)]:overflow-hidden border dark:border-gray-700 text-fg dark:text-gray-200 shadow-sm [&:has(.larhy3):not(:has(.yahnba))>.ccvgs8x]:pt-6 [&:has(.larhy3)]:overflow-hidden [&_table]:overflow-hidden"
+      "xrkr bg-white dark:bg-gray-800 rounded-xl xkd2 [&:has(table)_.ccvgs8x]:border-t [&:has(table)_.x32]:bg-tertiary [&:has(table)]:overflow-hidden border dark:border-gray-700 text-fg dark:text-gray-200 shadow-sm [&:has(.larhy3):not(:has(.yahnba))>.ccvgs8x]:pt-6 [&:has(.larhy3)]:overflow-hidden [&_table]:overflow-hidden"
     ],
     header: "flex xlw32 flex-col space-y-1.5 px-6 py-5",
     title: "sm:leading-6 leading-none klda font-semibold tracking-tight dark:text-gray-100",
