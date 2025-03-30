@@ -36,7 +36,7 @@ Bottleneck Ninja is a powerful web application designed to identify and solve ha
 
 1. Clone this repository
 ```bash
-git clone https://github.com/yourusername/Bottleneck-Ninja.git
+
 cd Bottleneck-Ninja/bottleneckCalculator
 ```
 
