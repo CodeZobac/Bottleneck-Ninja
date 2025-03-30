@@ -8,7 +8,7 @@ import { useTheme } from "next-themes";
 import { PencilIcon, CheckIcon, XIcon, HomeIcon, Sparkles, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { motion } from "framer-motion";
-import Link from "next/link";
+
 
 interface UserPreferences {
   id?: string;
@@ -820,7 +820,10 @@ export default function ProfilePage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <Link href="/">
+                  {/* Tive que usar um <a> para o href funcionar corretamente, mesmo com o onPress no Button
+                    Isso é um bug conhecido no Next.js, onde o href não funciona corretamente com ecras tacteis*/}
+                  {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                  <a href="/" className="block cursor-pointer">
                     <div className="relative group">
                       <motion.div
                         className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 opacity-75 group-hover:opacity-100 blur-sm transition-opacity"
@@ -838,11 +841,16 @@ export default function ProfilePage() {
                         intent="secondary"
                         size="small"
                         className="rounded-full w-12 h-12 shadow-lg hover:scale-105 relative z-10 transition-transform"
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        onPress={(e) => {
+                          // Backup handler in case button event handling is odd on mobile
+                          window.location.href = '/';
+                        }}
                       >
                         <HomeIcon className={isDarkTheme ? "text-white" : "text-gray-700"} />
                       </Button>
                     </div>
-                  </Link>
+                  </a>
                 </motion.div>
               </div>
 

@@ -2,7 +2,6 @@
 
 import {
   IconCirclePerson,
-  IconDeviceDesktop,
   IconLogout,
   IconMacbook,
   IconMoon,
@@ -102,17 +101,12 @@ export function HeaderMenu() {
             <Menu.Item>
               {resolvedTheme === "light" ? (
                 <IconSun />
-              ) : resolvedTheme === "dark" ? (
-                <IconMoon />
               ) : (
-                <IconDeviceDesktop />
+                <IconMoon />
               )}
               <span className="menu-label">Switch theme</span>
             </Menu.Item>
             <Menu.Content>
-              <Menu.Item onAction={() => setTheme("system")}>
-                <IconDeviceDesktop /> System
-              </Menu.Item>
               <Menu.Item onAction={() => setTheme("dark")}>
                 <IconMoon /> Dark
               </Menu.Item>
@@ -173,17 +167,12 @@ export function HeaderMenu() {
             <Menu.Item>
               {resolvedTheme === "light" ? (
                 <IconSun />
-              ) : resolvedTheme === "dark" ? (
-                <IconMoon />
               ) : (
-                <IconDeviceDesktop />
+                <IconMoon />
               )}
               <span className="menu-label">Switch theme</span>
             </Menu.Item>
             <Menu.Content>
-              <Menu.Item onAction={() => setTheme("system")}>
-                <IconDeviceDesktop /> System
-              </Menu.Item>
               <Menu.Item onAction={() => setTheme("dark")}>
                 <IconMoon /> Dark
               </Menu.Item>

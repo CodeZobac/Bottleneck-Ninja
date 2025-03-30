@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { signIn, signOut, useSession } from "next-auth/react";
 import {
-  IconDeviceDesktop,
   IconLogout,
   IconMoon,
   IconSun,
@@ -204,12 +203,6 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
               <p className="text-sm mb-2">Theme</p>
               <div className="flex gap-4">
                 <button 
-                  onClick={() => setTheme("system")}
-                  className={`p-2 rounded-md ${resolvedTheme === "system" ? "bg-primary/20 text-primary" : ""}`}
-                >
-                  <IconDeviceDesktop />
-                </button>
-                <button 
                   onClick={() => setTheme("dark")}
                   className={`p-2 rounded-md ${resolvedTheme === "dark" ? "bg-primary/20 text-primary" : ""}`}
                 >
@@ -242,12 +235,6 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
             <div className="pt-2 border-t border-border">
               <p className="text-sm mb-2">Theme</p>
               <div className="flex gap-4">
-                <button 
-                  onClick={() => setTheme("system")}
-                  className={`p-2 rounded-md ${resolvedTheme === "system" ? "bg-primary/20 text-primary" : ""}`}
-                >
-                  <IconDeviceDesktop />
-                </button>
                 <button 
                   onClick={() => setTheme("dark")}
                   className={`p-2 rounded-md ${resolvedTheme === "dark" ? "bg-primary/20 text-primary" : ""}`}
